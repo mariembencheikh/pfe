@@ -10,10 +10,10 @@ if (isset($_POST["submit"])) {
     $cursor = $collection_Employees->findOne(array('department'=>$select,'function' => $function));
     if (empty($cursor)){
 
-        $collection_Employees->insert(array('department'=>$select,'function' => $function, 'salary' => doubleval($salary)));
+        $collection_Employees->insert(array('department'=>$select,'function' => $function, 'salary' => doubleval($salary),'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
         header("Location:employees.php");
     } else {
-        echo "<script>alert(\"Fonction existe\")</script>";
+        $_SESSION['errMsg'] = "Fonction existe";
     }
 }
 $_SESSION["function"] = $function;
@@ -93,6 +93,11 @@ $_SESSION["function"] = $function;
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="ajoutFunction.php"  method="POST">
+                                    <div id="errMsg">
+                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
+                                    </div>
+                                    <br>
+                                    <?php unset($_SESSION['errMsg']); ?>
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align">Departement<span class="required">*</span></label>
                                         <div class="col-md-6 col-sm-6 ">

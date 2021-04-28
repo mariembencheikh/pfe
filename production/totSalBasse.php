@@ -3,7 +3,7 @@ include("config.php");
 $salaire = $collection_salaire->find()->sort(array('department' => 1));
 $department = $collection_Department->find()->sort(array('nameDep' => 1));
 
-$saison = $collection_saison->findOne(array('typeS' => 'haute'));
+$saison = $collection_saison->findOne(array('typeS' => 'basse'));
 
 $a = array();
 
@@ -142,7 +142,7 @@ foreach ($salaire as $item) {
                                                             });
                                                             while ($i < count($a)) {
 
-                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['haute']*$dep['interval'][$j]['n2'] * $saison['days'];
+                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['basse']*$dep['interval'][$j]['n2'] * $saison['days'];
 
 
                                                                 $i++;
@@ -163,9 +163,9 @@ foreach ($salaire as $item) {
 
                                                                                 <input
 
-                                                                                        value="<?php echo number_format($filtre_interval[$x]['salaireTotale']['haute']*$dep['interval'][$j]['n2'] * $saison['days'], 3, ',', ','); ?>"
-                                                                                        disabled
-                                                                                        style="height: 35px;width: 120px"
+                                                                                    value="<?php echo number_format($filtre_interval[$x]['salaireTotale']['basse']*$dep['interval'][$j]['n2'] * $saison['days'], 3, ',', ','); ?>"
+                                                                                    disabled
+                                                                                    style="height: 35px;width: 120px"
                                                                                 >
 
                                                                             </td>
@@ -182,9 +182,9 @@ foreach ($salaire as $item) {
                                                                             <td>
                                                                                 <input
 
-                                                                                        value="<?php echo number_format(0, 3, ',', ','); ?>"
-                                                                                        disabled
-                                                                                        style="height: 35px;width: 120px">
+                                                                                    value="<?php echo number_format(0, 3, ',', ','); ?>"
+                                                                                    disabled
+                                                                                    style="height: 35px;width: 120px">
                                                                             </td>
                                                                         </tr>
                                                                     </table>
@@ -236,18 +236,18 @@ foreach ($salaire as $item) {
                                                             </table>
 
                                                         </td>
-<!--                                                        <td style="vertical-align: middle; text-align: center;">-->
-<!---->
-<!--                                                            <input-->
-<!--                                                                    value="--><?php
-//                                                                    echo number_format($Total, 3, ',', ',');
-//
-//                                                                    ?><!--" disabled-->
-<!--                                                                    style="height: 35px;width: 75px" ;-->
-<!--                                                            >-->
-<!---->
-<!---->
-<!--                                                        </td>-->
+                                                        <!--                                                        <td style="vertical-align: middle; text-align: center;">-->
+                                                        <!---->
+                                                        <!--                                                            <input-->
+                                                        <!--                                                                    value="--><?php
+                                                        //                                                                    echo number_format($Total, 3, ',', ',');
+                                                        //
+                                                        //                                                                    ?><!--" disabled-->
+                                                        <!--                                                                    style="height: 35px;width: 75px" ;-->
+                                                        <!--                                                            >-->
+                                                        <!---->
+                                                        <!---->
+                                                        <!--                                                        </td>-->
                                                     </tr>
                                                     <?php
 

@@ -1,22 +1,25 @@
 <?php
 include("config.php");
 session_start();
-if(isset($_POST["submit"])) {
-    $name=$_POST['nameDep'];
-    $number=$_POST['nbEmp'];
-    $table=array();
-    $cursor = $collection_Department->findOne(array('nameDep' => $name));
-    if (empty($cursor)) {
-        $collection_Department->insert(array('nameDep' => $name, 'number'=>$number,'interval'=>$table,'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
-        header("Location:departments.php");
+if (isset($_POST["submit"])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];
+    $pwd = $_POST['pwd'];
+    $role= $_POST['role'];
+    $errmsg='';
+    $fetch=$collection->findOne(array("email" => $email));
+    if(empty($fetch)){
+        $collection->insert(array("name" => $name, "email" => $email,"telephone"=>$tel,'password'=>$pwd,'role'=>$role));
+        header("Location:listeUser.php");
     }
     else{
-        $_SESSION['errMsg'] = "Département existe";
+        $_SESSION['errMsg'] ="Email existe";
     }
+//    header("Location:listeUser.php");
 }
-$_SESSION["nameDep"]=$name;
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,19 +60,18 @@ $_SESSION["nameDep"]=$name;
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <!-- sidebar menu -->
-                <?php include("sidebar menu.php");?>
+                <?php include("sidebar menu.php"); ?>
                 <!-- /sidebar menu -->
 
                 <!-- /menu footer buttons -->
-                <?php include ("menuFooter.html");?>
+                <?php include("menuFooter.html"); ?>
                 <!-- /menu footer buttons -->
                 <!-- /menu footer buttons -->
             </div>
         </div>
 
-
         <!-- top navigation -->
-        <?php include("topNavigation.php");?>
+        <?php include("topNavigation.php"); ?>
         <!-- /top navigation -->
 
         <!-- page content -->
@@ -77,7 +79,7 @@ $_SESSION["nameDep"]=$name;
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Ajouter departement</h3>
+                        <h3>Ajouter utilisateur</h3>
                     </div>
 
 
@@ -90,34 +92,79 @@ $_SESSION["nameDep"]=$name;
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
-                                <br />
-                                <form class="form-horizontal form-label-left" action="ajoutDepartment.php" method="POST">
+                                <br/>
+                                <form class="form-horizontal form-label-left" action="ajoutUser.php" method="POST">
                                     <div id="errMsg">
                                         <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
                                     </div>
                                     <br>
                                     <?php unset($_SESSION['errMsg']); ?>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name"  >Nom departement <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span
+                                                class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="name" required="required" class="form-control " name="nameDep">
+                                            <input type="text" required="required" class="form-control "
+                                                   name="name" value="<?php echo $name;?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre des postes <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Email
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" name="nbEmp" required="required" class="form-control">
+                                            <input type="text" name="email" required="required"
+                                                   class="form-control" value="<?php echo $email;?>">
                                         </div>
                                     </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Téléphone
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
+                                            <input type="number" name="tel" required="required"
+                                                   class="form-control" value="<?php echo $tel;?>">
+                                        </div>
+                                    </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Mot de
+                                            passe <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
+                                            <input type="text" name="pwd" required="required"
+                                                   class="form-control" >
+                                        </div>
+                                    </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Role
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
 
+                                            <select class="select2_single form-control" tabindex="-1" name="role"
+                                                    required="required">
+                                                <option></option>
+                                                <option value="1" >
+                                                    Admin
+                                                </option>
+                                                <option value="0" >
+                                                    User
+                                                </option>
+
+                                            </select>
+                                            <!--                                            <input type="text"  name="email" required="required"-->
+                                            <!--                                                   class="form-control" value="-->
+                                            <?php //echo $user['role']; ?><!--">-->
+                                        </div>
+                                    </div>
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
-                                            <input  class="btn btn-success" name="submit"  type="submit" value="Ajouter" />
+                                            <input class="btn btn-success" name="submit" type="submit"
+                                                   value="Ajouter"/>
 
-                                           <input  class="btn btn-primary" name="cancel"  type="button" value="Annuler" onclick="window.location='departments.php';"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
+                                                   onclick="window.location='listeUser.php';"/>
 
 
                                         </div>
@@ -179,4 +226,6 @@ $_SESSION["nameDep"]=$name;
 <!-- Custom Theme Scripts -->
 <script src="../build/js/custom.min.js"></script>
 
-</body></html>
+</body>
+</html>
+

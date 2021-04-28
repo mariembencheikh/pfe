@@ -1,6 +1,21 @@
 <?php
 include("config.php");
 session_start();
+if (isset($_GET['id'])) {
+
+    $dep_intervalle = $collection_Department->findOne(array('nameDep' => $_GET['id']));
+
+    usort($dep_intervalle['interval'], function ($a, $b) { // anonymous function
+
+        return $a['ordre'] - $b['ordre'];
+    });
+    $collection_Department->update(array('nameDep'=>$dep_intervalle['nameDep']),array('$set'=>array('interval'=>$dep_intervalle['interval'])));
+
+
+} else {
+    header("Location:departments.php");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,39 +86,52 @@ session_start();
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
+
                                 <br/>
-                                    <div class="row">
-                                        <div class="col-sm-6 offset-md-2">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped jambo_table bulk_action">
-                                                    <thead class="headings">
-                                                    <th class="column-title"> Ordre</th>
-                                                    <th class="column-title"> Intervalle</th>
-                                                    <th class="column-title no-link last"><span class="nobr">Action</span></th>
-                                                    </thead >
-                                                    <tbody>
-                                                    <?php
-                                                    $cursorNbclients = $collection_nbClients->find()->sort(array("ordre"=>1));
-                                                        foreach ($cursorNbclients as $c) {
-                                                            echo "<tr class='odd pointer'>";
-                                                            echo "<td colspan=' '>" . $c['ordre'] . "</td>";
-                                                            echo "<td colspan=' '>" . $c['n1'] . " - " . $c['n2'] . "</td>";
-                                                            echo "<td class='last'><a href='editNbCleints.php?id=".$c['_id']."'><i class='fa fa-edit' style='size: 10px;'></i></a></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='deleteInterval.php?id=".$c['_id']."' onclick='return sure();'><i class='fa fa-trash'></i></a></td>";
-                                                            echo "</tr>";
-                                                        }
+                                <div class="row">
+                                    <div class="col-sm-6 offset-md-2">
+                                        <div class="table-responsive">
+
+
+                                            <table class="table table-striped jambo_table bulk_action">
+                                                <thead class="headings">
+                                                <th class="column-title"> Ordre</th>
+                                                <th class="column-title"> Intervalle</th>
+                                                <th class="column-title no-link last"><span class="nobr">Action</span>
+                                                </th>
+                                                </thead>
+                                                <tbody>
+
+                                                <?php
+
+
+                                                for ($i = 0; $i < count($dep_intervalle['interval']); $i++) {
                                                     ?>
-                                                   </tbody>
-                                                </table>
-                                            </div>
+                                                    <tr class="odd pointer">
+                                                        <td><?php echo  $dep_intervalle['interval'][$i]['ordre'] ?></td>
+                                                        <td><?php echo $dep_intervalle['interval'][$i]['n1'] . " - " . $dep_intervalle['interval'][$i]['n2'] ?></td>
+                                                        <td class="last"><a
+                                                                    href="editNbCleints.php?id=<?php echo $i;?>&dep=<?php echo $dep_intervalle['nameDep'];?>">Modifier</a></a>&nbsp;&nbsp;<a
+                                                                    href="deleteInterval.php?id=<?php echo $i;?>&dep=<?php echo $dep_intervalle['nameDep'];?>"
+                                                                    onclick="return sure();">Supprimer</a>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+
+                                                }
+                                                ?>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                    <div class="ln_solid"></div>
-<!--                                <div class="item form-group">-->
-<!--                                    <div class="col-md-6 col-sm-6 offset-md-4">-->
-<!--                                        <input class="btn btn-primary" name="cancel" type="button" value="Cancel"-->
-<!--                                               onclick="window.location='employees.php';"/>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                                </div>
+                                <div class="ln_solid"></div>
+                                                                <div class="item form-group">
+                                                                    <div class="col-md-6 col-sm-6 offset-md-4">
+                                                                        <input class="btn btn-primary" name="cancel" type="button" value="Retour"
+                                                                               onclick="window.location='departments.php';"/>
+                                                                    </div>
+                                                                </div>
 
                             </div>
                         </div>
@@ -116,7 +144,6 @@ session_start();
         <!-- footer content -->
         <footer>
             <div class="pull-right">
-                <!--                div>Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>-->
             </
             <div class="clearfix"></div>
         </footer>
@@ -124,9 +151,8 @@ session_start();
     </div>
 </div>
 <script>
-    function sure()
-    {
-        return(confirm('Etes-vous sûr de vouloir supprimer cet interval?'));
+    function sure() {
+        return (confirm('Etes-vous sûr de vouloir supprimer cet interval?'));
     }
 </script>
 <!-- jQuery -->

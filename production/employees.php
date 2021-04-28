@@ -2,6 +2,8 @@
 include("config.php");
 session_start();
 $cursor = $collection_Employees->find();
+$UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,6 +82,12 @@ $cursor = $collection_Employees->find();
                                                     <th>Fonction</th>
                                                     <th>Salaire</th>
                                                     <th>Action</th>
+                                                    <?php if($UserConnect['role']==1){?>
+                                                    <th>Créee par</th>
+                                                    <th>Date de création</th>
+                                                    <th>Derniére modification par</th>
+                                                    <th>Date et heure de  modification</th>
+                                                    <?php }?>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -91,14 +99,20 @@ $cursor = $collection_Employees->find();
                                                        <td><?php echo $c['function'];?></td>
                                                        <td><?php echo number_format($c['salary'], 3, ',', ',');?></td>
                                                        <td class="last">
-                                                           <a href="editFunction.php?id=<?php echo $c["function"];?>">
+                                                           <a href="editFunction.php?id=<?php echo $c["function"];?>&dep=<?php echo $c['department'];?>">
                                                                 <i class="fa fa-edit" ></i>
                                                            </a>
                                                            &nbsp;&nbsp;&nbsp;
-                                                           <a href="deleteFunction.php?id=<?php echo $c["function"];?>" onclick="return sure();">
+                                                           <a href="deleteFunction.php?id=<?php echo $c["function"];?>&dep=<?php echo $c['department'];?>" onclick="return sure();">
                                                                <i class='fa fa-trash'></i>
                                                            </a>
                                                        </td>
+                                                       <?php if($UserConnect['role']==1){?>
+                                                           <td><?php echo $c['createdBy'];?></td>
+                                                           <td><?php echo $c['time']['date'];?></td>
+                                                           <td><?php echo $c['modifiedBy'];?></td>
+                                                           <td><?php echo $c['editTime']['date'];?></td>
+                                                       <?php }?>
                                                    </tr>
                                                     <?php
 

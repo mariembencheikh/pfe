@@ -1,27 +1,38 @@
 <?php
 include("config.php");
-if (isset($_POST['submit'])) {
-    $listeM = $_POST['listeM'];
-    $typeS = $_POST['typeS'];
-    $tabSelect = array();
-
-
-    foreach ($listeM as $item) {
-        array_push($tabSelect, $item);
+if (isset($_GET['submit'])) {
+    $tabMois = array('janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre');
+    $listeM = $_GET['listeM'];
+    $typeS = $_GET['typeS'];
+    $countDay = array();
+    $d = 0;
+    foreach ($tabMois as $t) {
+        foreach ($listeM as $item) {
+            if ($item == $t) {
+                $key = array_search($t, $tabMois);
+                array_push($countDay, $key);
+            }
+        }
     }
+    for ($i = 0; $i < count($countDay); $i++) {
+        $d += cal_days_in_month(CAL_GREGORIAN, $countDay[$i] + 1, 2021);
+
+    }
+
 
     $saison = $collection_saison->findOne(array('typeS' => $typeS));
 
     if (empty($saison)) {
 
-        $collection_saison->insert(array('typeS' => $typeS, 'listeM' => $tabSelect));
+        $collection_saison->insert(array('typeS' => $typeS, 'listeM' => $listeM, 'days' => $d));
 
 
-        header("Location:saison.php");
+        header("Location:saison.php?typeS=$typeS");
     } else {
-        $newData = array('$set' => array('listeM' => $tabSelect));
+        $newData = array('$set' => array('listeM' => $listeM, 'days' => $d));
         $collection_saison->update(array('typeS' => $typeS), $newData);
-        header("Location:saison.php");
+
+        header("Location:saison.php?typeS=$typeS");
     }
 
 
@@ -98,7 +109,7 @@ if (isset($_POST['submit'])) {
                             </div>
                             <div class="x_content">
                                 <br/>
-                                <form class="form-horizontal form-label-left" action="saison.php" method="POST">
+                                <form class="form-horizontal form-label-left" action="saison.php" method="GET">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align"> Type saison<span
                                                     class="required">*</span></label>
@@ -107,22 +118,28 @@ if (isset($_POST['submit'])) {
                                                     name="typeS"
                                                     required onchange="traitement(this.value);">
                                                 <option></option>
-                                                <option value="haute" <?php if ($_POST['typeS'] == 'haute') { ?> selected="selected"<?php } ?> >
+
+                                                <option value="haute"
+                                                    <?php if ($_GET['typeS'] == 'haute') { ?> selected="selected"
+                                                    <?php } ?> >
                                                     Haute Saison
                                                 </option>
-                                                <option value="moyenne" <?php if ($_POST['typeS'] == 'moyenne') { ?> selected="selected"<?php } ?> >
+                                                <option value="moyenne"
+                                                    <?php if ($_GET['typeS'] == 'moyenne') { ?> selected="selected"
+                                                    <?php } ?> >
                                                     Moyenne saison
                                                 </option>
-                                                <option value="basse" <?php if ($_POST['typeS'] == 'basse') { ?> selected="selected"<?php } ?> >
+                                                <option value="basse"
+                                                    <?php if ($_GET['typeS'] == 'basse') { ?> selected="selected"
+                                                    <?php } ?> >
                                                     Basse saison
                                                 </option>
+
                                             </select>
                                         </div>
 
 
                                         <div class="col-md-2 col-sm-2 " id="selectM">
-
-
                                         </div>
 
 
@@ -141,21 +158,11 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
         </div>
-        <!-- /page content -->
 
-        <!-- footer content -->
-
-<!--        <footer>-->
-<!--            <div class="pull-right"></div>-->
-<!---->
-<!--                <div class="clearfix"></div>-->
-<!--        </footer>-->
-        <!-- /footer content -->
     </div>
 </div>
 <script>
     function traitement(saison) {
-
         $.ajax({
             type: 'GET',
             url: 'test.php?saison=' + saison,
@@ -165,16 +172,25 @@ if (isset($_POST['submit'])) {
             },
             success: function (retour) {
                 $("#selectM").html(retour);
+
             },
         });
-
-
     }
+
+    $(document).ready(function () {
+        $('#ok').click(function () {
+            checked = $("input[type=checkbox]:checked").length;
+
+            if (!checked) {
+                alert("Il faut cocher au moins une case.");
+                return false;
+            }
+
+        });
+    });
 </script>
 <!-- jQuery -->
 <script src="../vendors/jquery/dist/jquery.min.js"></script>
-
-
 <!-- Bootstrap -->
 <script src="../vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <!-- FastClick -->
@@ -208,7 +224,6 @@ if (isset($_POST['submit'])) {
 <script src="../vendors/starrr/dist/starrr.js"></script>
 <!-- Custom Theme Scripts -->
 <script src="../build/js/custom.min.js"></script>
-
 </body>
 </html>
 

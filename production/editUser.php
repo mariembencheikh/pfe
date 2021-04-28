@@ -1,22 +1,24 @@
 <?php
 include("config.php");
 session_start();
-if(isset($_POST["submit"])) {
-    $name=$_POST['nameDep'];
-    $number=$_POST['nbEmp'];
-    $table=array();
-    $cursor = $collection_Department->findOne(array('nameDep' => $name));
-    if (empty($cursor)) {
-        $collection_Department->insert(array('nameDep' => $name, 'number'=>$number,'interval'=>$table,'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
-        header("Location:departments.php");
-    }
-    else{
-        $_SESSION['errMsg'] = "Département existe";
-    }
+if (isset($_POST["submit"])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];
+    $pwd = $_POST['pwd'];
+    $role= $_POST['role'];
+    $newdata = array('$set' => array("name" => $name, "email" => $email,"telephone"=>$tel,'role'=>$role));
+    $collection->update(array('name' => $name,"email"=>$email), $newdata);
+    header("Location:listeUser.php");
 }
-$_SESSION["nameDep"]=$name;
-?>
+if (isset($_GET['id'])) {
+    $user = $collection->findOne(array('name' => $_GET['id']));
+}
+else
+    header("Location:listeUser.php");
 
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,19 +59,18 @@ $_SESSION["nameDep"]=$name;
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <!-- sidebar menu -->
-                <?php include("sidebar menu.php");?>
+                <?php include("sidebar menu.php"); ?>
                 <!-- /sidebar menu -->
 
                 <!-- /menu footer buttons -->
-                <?php include ("menuFooter.html");?>
+                <?php include("menuFooter.html"); ?>
                 <!-- /menu footer buttons -->
                 <!-- /menu footer buttons -->
             </div>
         </div>
 
-
         <!-- top navigation -->
-        <?php include("topNavigation.php");?>
+        <?php include("topNavigation.php"); ?>
         <!-- /top navigation -->
 
         <!-- page content -->
@@ -77,7 +78,7 @@ $_SESSION["nameDep"]=$name;
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Ajouter departement</h3>
+                        <h3>Modifier utilisateur</h3>
                     </div>
 
 
@@ -90,34 +91,73 @@ $_SESSION["nameDep"]=$name;
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
-                                <br />
-                                <form class="form-horizontal form-label-left" action="ajoutDepartment.php" method="POST">
-                                    <div id="errMsg">
-                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
-                                    </div>
-                                    <br>
-                                    <?php unset($_SESSION['errMsg']); ?>
+                                <br/>
+                                <form class="form-horizontal form-label-left" action="editUser.php" method="POST">
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name"  >Nom departement <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span
+                                                    class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="name" required="required" class="form-control " name="nameDep">
+                                            <input type="text" required="required" class="form-control "
+                                                   name="name" value="<?php echo $user['name']; ?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre des postes <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Email
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" name="nbEmp" required="required" class="form-control">
+                                            <input type="text" name="email" required="required"
+                                                   class="form-control" value="<?php echo $user['email']; ?>">
                                         </div>
                                     </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Téléphone
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
+                                            <input type="number" name="tel" required="required"
+                                                   class="form-control" value="<?php echo $user['telephone']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Mot de
+                                            passe <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
+                                            <input type="text" name="pwd" required="required"
+                                                   class="form-control" value="<?php echo $user['password']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Role
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
 
+                                            <select class="select2_single form-control" tabindex="-1" name="role"
+                                                    required="required">
+                                                <option value="1" <?php if ($user['role'] == 1) { ?> selected<?php } ?> >
+                                                    Admin
+                                                </option>
+                                                <option value="0" <?php if ($user['role'] == 0) { ?> selected<?php } ?> <?php if ($user['role'] == 1){ ?> disabled<?php }?> >
+                                                    User
+                                                </option>
+
+                                            </select>
+                                            <!--                                            <input type="text"  name="email" required="required"-->
+                                            <!--                                                   class="form-control" value="-->
+                                            <?php //echo $user['role']; ?><!--">-->
+                                        </div>
+                                    </div>
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
-                                            <input  class="btn btn-success" name="submit"  type="submit" value="Ajouter" />
+                                            <input class="btn btn-success" name="submit" type="submit"
+                                                   value="Modifier"/>
 
-                                           <input  class="btn btn-primary" name="cancel"  type="button" value="Annuler" onclick="window.location='departments.php';"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
+                                                   onclick="window.location='listeUser.php';"/>
 
 
                                         </div>
@@ -179,4 +219,6 @@ $_SESSION["nameDep"]=$name;
 <!-- Custom Theme Scripts -->
 <script src="../build/js/custom.min.js"></script>
 
-</body></html>
+</body>
+</html>
+

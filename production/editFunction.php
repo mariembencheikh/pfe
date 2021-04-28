@@ -2,20 +2,20 @@
 include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
-    $dep=$_POST['department'];
-    $function=$_POST['function'];
-    $salary=$_POST['salary'];
-    $newData=array('$set'=>array('department'=>$dep,'function'=>$function,'salary'=>doubleval($salary)));
-    $collection_Employees->update(array('department'=>$dep,'function'=>$function),$newData);
+    $dep = $_POST['department'];
+    $function = $_POST['function'];
+    $salary = $_POST['salary'];
+
+    $newData = array('$set' => array('department' => $dep, 'function' => $function, 'salary' => doubleval($salary),'modifiedBy'=>$_SESSION['email'],'editTime'=>new DateTime()));
+    $collection_Employees->update(array('department' => $dep), $newData);
     header("Location:employees.php");
 
 
 }
-if (isset($_GET['id'])){
+if (isset($_GET['id'])) {
 
-    $function_edit = $collection_Employees->findOne(array('function' => $_GET['id']));
-}
-else
+    $function_edit = $collection_Employees->findOne(array('department'=>$_GET['dep'],'function' => $_GET['id']));
+} else
     header("Location:employees.php");
 
 
@@ -98,30 +98,35 @@ else
                                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom du département <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="name" required="required" class="form-control "
+                                            <input type="text"  required="required" class="form-control"
                                                    name="department" value="<?php  echo $function_edit['department'];?>">
                                         </div>
                                     </div>
+
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Fonction <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Fonction
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="number" name="function" required="required"
-                                                   class="form-control" value="<?php echo $function_edit['function']; ?>">
+                                            <input type="text"  name="function" required="required"
+                                                   class="form-control"
+                                                   value="<?php echo $function_edit['function']; ?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Salaire <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Salaire
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="number" name="salary"
+                                            <input type="text"  name="salary"
                                                    class="form-control" value="<?php echo $function_edit['salary']; ?>">
                                         </div>
                                     </div>
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
-                                            <input class="btn btn-success" name="submit" type="submit" value="Modifier"/>
+                                            <input class="btn btn-success" name="submit" type="submit"
+                                                   value="Modifier"/>
 
                                             <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
                                                    onclick="window.location='employees.php';"/>

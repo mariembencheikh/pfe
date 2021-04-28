@@ -4,7 +4,7 @@ session_start();
 if (isset($_POST["submit"])) {
     $nameDep = $_POST['nameDep'];
     $numberEmp = $_POST['nbEmp'];
-    $newdata = array('$set' => array("nameDep" => $nameDep, "number" => $numberEmp));
+    $newdata = array('$set' => array("nameDep" => $nameDep, "number" => $numberEmp,"modifiedBy"=>$_SESSION['email'],"editTime"=>new DateTime()));
     $collection_Department->update(array('nameDep' => $nameDep), $newdata);
     header("Location:departments.php");
 }

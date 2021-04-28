@@ -2,21 +2,65 @@
 include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
+
+
+    $ordre = $_POST['ordre'];
     $n1 = $_POST['n1'];
     $n2 = $_POST['n2'];
-    $ordre=$_POST['ordre'];
+    $dep = $_POST['dep'];
     $id = $_POST['id'];
 
+    $nb_edit = $collection_Department->findOne(array('nameDep' => $dep));
 
-    $newdata = array('$set' => array('ordre'=>$ordre,'n1' => $n1 , 'n2' => $n2));
-    $collection_nbClients->update(array('_id'=> new MongoId($id)), $newdata);
-    //header("Location:interval.php");
+    $int = $nb_edit['interval'][$id]['n1'] . " - " . $nb_edit['interval'][$id]['n2'];
+
+    $intervalles = array();
+    $intervalles = $nb_edit['interval'];
+    $tab_existe = array();
+    for ($i = 0; $i < count($intervalles); $i++) {
+        if (($intervalles[$i]['ordre'] == $ordre) && ($intervalles[$i]['n1'] == $n1) && ($intervalles[$i]['n2'] == $n2)) {
+            array_push($tab_existe, array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2));
+        }
+
+    }
+
+    if (empty($tab_existe)) {
+        $intervalles[$id] = array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2);
+        $sal=$collection_salaire->findOne(array('department'=>$dep,'interval'=>$int));
+        $nbPersonnel = $collection_nbPersonnel->findOne(array('department' => $dep,'interval'=>$int));
+        $newdata = array('$set' => array("interval" => $intervalles));
+
+        if ($n1 < $n2) {
+            $collection_Department->update(array('nameDep' => $nb_edit['nameDep']), $newdata);
+            $collection_salaire->update(array('department'=>$dep),array('$set'=>array('interval'=>$intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
+            $collection_nbPersonnel->update(array('department'=>$dep),array('$set'=>array('interval'=>$intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
+            header("Location:interval.php?id=$dep");
+        } elseif ($n1 >= $n2) {
+            echo "<script>alert(\" Invalid interval\")</script>";
+        }
+    } else {
+        echo "<script>alert(\"existe\")</script>";
+    }
+
+//    $intervalles[$id] = array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2);
+//
+//    $newdata = array('$set' => array("interval" => $intervalles));
+//
+//    if ($n1 < $n2) {
+//        $collection_Department->update(array('nameDep' => $nb_edit['nameDep']), $newdata);
+//        header("Location:interval.php?id=$dep");
+//    } elseif ($n1 >= $n2) {
+//        echo "<script>alert(\" Invalid interval\")</script>";
+//    }
+
+
 }
-if (isset($_GET['id'])) {
-   $nb_edit = $collection_nbClients->findOne(array('_id' => new MongoId($_GET['id'])));
-} else{
-    header("Location:interval.php");
 
+if (isset($_GET['id'])) {
+    $nb_edit = $collection_Department->findOne(array('nameDep' => $_GET['dep']));
+
+} else {
+    header("Location:departments.php");
 }
 ?>
 <!DOCTYPE html>
@@ -59,11 +103,11 @@ if (isset($_GET['id'])) {
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <!-- sidebar menu -->
-                <?php include ("sidebar menu.php"); ?>
+                <?php include("sidebar menu.php"); ?>
                 <!-- /sidebar menu -->
 
                 <!-- /menu footer buttons -->
-                <?php include ("menuFooter.html"); ?>
+                <?php include("menuFooter.html"); ?>
                 <!-- /menu footer buttons -->
                 <!-- /menu footer buttons -->
             </div>
@@ -71,7 +115,7 @@ if (isset($_GET['id'])) {
 
 
         <!-- top navigation -->
-        <?php include ("topNavigation.php"); ?>
+        <?php include("topNavigation.php"); ?>
         <!-- /top navigation -->
 
         <!-- page content -->
@@ -95,17 +139,23 @@ if (isset($_GET['id'])) {
                                         <div class="col-md-4 col-sm-4 offset-md-3">
                                             <div class="input-group mb-3">
                                                 <input type="number" name="ordre" class="form-control" required
-                                                       style='width:50px;' min='0'
-                                                       value="<?php  echo $nb_edit['ordre'];?>"/>
+                                                       style='width:50px;'
+                                                       value="<?php echo $nb_edit['interval'][intval($_GET['id'])]['ordre']; ?>"/>
                                                 &nbsp;&nbsp;<input type="number" name="n1" class="form-control" required
-                                                       style='width:50px;' min='0'
-                                                       value="<?php  echo $nb_edit['n1'];?>"/>
+                                                                   style='width:50px;'
+                                                                   value="<?php echo $nb_edit['interval'][intval($_GET['id'])]['n1']; ?>"/>
                                                 &nbsp;&nbsp;
-                                                <input type="number" name=" n2" class="form-control" required
-                                                style='width:50px;' value="<?php  echo $nb_edit['n2'];?>"/>
-                                                &nbsp;&nbsp;<input type="text" name=" id" class="form-control" required hidden
-                                                style='width:50px;' value="<?php  echo $nb_edit['_id'];?>" />
-                                                &nbsp;&nbsp;
+                                                <input type="number" name="n2" class="form-control" required
+                                                       style='width:50px;'
+                                                       value="<?php echo $nb_edit['interval'][intval($_GET['id'])]['n2']; ?>"/>
+                                                <input type="text" name="dep" class="form-control" required hidden
+                                                       style='width:50px;'
+                                                       value="<?php echo $nb_edit['nameDep']; ?>"/>
+                                                <input type="number" name="id" class="form-control" required hidden
+                                                       style='width:50px;'
+                                                       value="<?php echo $_GET['id']; ?>"/>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+
                                                 <span class="input-group-btn">
 														<input type="submit" class="btn btn-primary" name="submit"
                                                                value="Enregistrer">
@@ -118,7 +168,7 @@ if (isset($_GET['id'])) {
                                         <div class="col-md-6 col-sm-6 offset-md-4">
 
                                             <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
-                                                   onclick="window.location='interval.php';"/>
+                                                   onclick="window.location='interval.php?id=<?php echo $nb_edit['nameDep']; ?>';"/>
                                         </div>
                                     </div>
                                 </form>

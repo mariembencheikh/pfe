@@ -2,21 +2,47 @@
 include("config.php");
 session_start();
 if (isset($_POST["ok"])) {
-    $n1 = $_POST['n1'];
-    $n2 = $_POST['n2'];
-    $ordre = $_POST['ordre'];
-    $cursor_nb = $collection_nbClients->findOne(array('ordre'=>$ordre,'n1' => $n1, 'n2' => $n2));
-    if (empty($cursor_nb)) {
-        if($n1<$n2) {
-            $collection_nbClients->insert(array('ordre'=>$ordre,'n1' => $n1, 'n2' => $n2));
+    if (isset($_GET['id'])) {
+
+        $n1 = $_POST['n1'];
+        $n2 = $_POST['n2'];
+        $ordre = $_POST['ordre'];
+        $dep_edit = $collection_Department->findOne(array('nameDep' => $_GET['id']));
+
+        $intervalles = array();
+        $intervalles = $dep_edit['interval'];
+        $tab_existe = array();
+        for ($i = 0; $i < count($intervalles); $i++) {
+            if (($intervalles[$i]['ordre'] == $ordre) && ($intervalles[$i]['n1'] == $n1) && ($intervalles[$i]['n2'] == $n2)) {
+                array_push($tab_existe, array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2));
+            }
+
         }
-        elseif ($n1>=$n2){
-            echo "<script>alert(\" Invalid interval\")</script>";
+
+        if (empty($tab_existe)) {
+            array_push($intervalles, array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2));
+
+            $newdata = array('$set' => array("interval" => $intervalles));
+            if ($n1 < $n2) {
+                $collection_Department->update(array('nameDep' => $dep_edit['nameDep']), $newdata);
+            } elseif ($n1 >= $n2) {
+                echo "<script>alert(\" Invalid interval\")</script>";
+            }
+        } else {
+            echo "<script>alert(\"existe\")</script>";
         }
-    } else {
-        echo "<script>alert(\" already existed\")</script>";
+
+
     }
+
+
 }
+if (isset($_GET['id'])) {
+    $dep_edit = $collection_Department->findOne(array('nameDep' => $_GET['id']));
+} else {
+    header("Location:interval.php");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,18 +112,22 @@ if (isset($_POST["ok"])) {
                             </div>
                             <div class="x_content">
                                 <br/>
-                                <form class="form-horizontal form-label-left" action="nbClients.php" method="POST">
+                                <form class="form-horizontal form-label-left"
+                                      action="nbClients.php?id=<?php echo $dep_edit['nameDep']; ?>" method="POST">
                                     <div class="form-group row">
                                         <div class="col-md-4 col-sm-4 offset-md-3">
                                             <div class="input-group mb-5">
-<!--                                                <div class="item form-group">-->
-                                                    <label class="col-form-label  label-align" for="name"  >Ordre:<span class="required">*</span> &nbsp;&nbsp;</label>
-                                                    <input type='number' name="ordre" class="form-control" required
-                                                                    style='width:50px;'min="0"/>
-<!--                                                </div>-->
+                                                <div class="item form-group">
+                                                    <label class="col-form-label  label-align" for="name">Ordre:<span
+                                                                class="required">*</span> &nbsp;&nbsp;</label>
 
-                                                &nbsp;&nbsp; <input type='number' name="n1" class="form-control" required
-                                                       style='width:50px;'min="0"/>
+                                                </div>
+                                                <input type='number' name="ordre" class="form-control" required
+                                                       style='width:50px;' min="0"/>
+
+                                                &nbsp;&nbsp; <input type='number' name="n1" class="form-control"
+                                                                    required
+                                                                    style='width:50px;' min="0"/>
                                                 &nbsp;&nbsp;
                                                 <input type='number' name="n2" class="form-control" required
                                                        style='width:50px;'/>
@@ -116,23 +146,37 @@ if (isset($_POST["ok"])) {
                                                 <table class="table table-striped jambo_table bulk_action">
                                                     <?php
                                                     if (isset($_POST["ok"])) {
-                                                        $cursorNbclients = $collection_nbClients->find()->sort(array('ordre'=>1));
-                                                        echo "<thead class='headings'>";
-                                                        echo "<th class='column-title'> Ordre</th>";
-                                                        echo "<th class='column-title'>Interval</th>";
-                                                        echo "<th class='column-title no-link last'><span class='nobr'>Action</span></th>";
-                                                        echo "</thead >";
-                                                        echo "<tbody>";
-                                                        foreach ($cursorNbclients as $c) {
-                                                            echo "<tr class='odd pointer'>";
-                                                            echo "<td colspan=' '>" . $c['ordre'] ."</td>";
-                                                            echo "<td colspan=' '>" . $c['n1'] . " - " . $c['n2'] . "</td>";
-                                                            echo "<td class='last'><a href='editNbCleints.php?id=".$c['_id']."'>Edit</a></a>&nbsp;&nbsp;<a href='deleteInterval.php?id=".$c['_id']."'>Delete</a></td>";
-                                                            echo "</tr>";
-                                                        }
-                                                    }
-                                                    echo "</tbody>";
+                                                    $cursor = $collection_Department->findOne(array('nameDep' => $_GET['id']));
+                                                    usort($cursor['interval'], function ($a, $b) { // anonymous function
+
+                                                        return $a['ordre'] - $b['ordre'];
+                                                    });
+                                                    $collection_Department->update(array('nameDep'=>$cursor['nameDep']),array('$set'=>array('interval'=>$cursor['interval'])));
+
                                                     ?>
+                                                    <input hidden value="<?php echo $cursor['nameDep']; ?>" name="dep">
+                                                    <thead class="headings">
+                                                    <th class="column-title"> Ordre</th>
+                                                    <th class="column-title">Intervalle</th>
+                                                    <th class="column-title no-link last"><span
+                                                                class="nobr">Action</span></th>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php for ($i = 0; $i < count($cursor['interval']); $i++) { ?>
+                                                        <tr class="odd pointer">
+                                                            <td><?php echo $cursor['interval'][$i]['ordre']; ?></td>
+                                                            <td><?php echo $cursor['interval'][$i]['n1'] . " - " . $cursor['interval'][$i]['n2']; ?></td>
+                                                            <td class="last"><a
+                                                                        href="editNbCleints.php?id=<?php echo $i; ?>&dep=<?php echo $cursor['nameDep']; ?>">Modifier</a></a>&nbsp;&nbsp;<a
+                                                                        href="deleteInterval.php?id=<?php echo $i; ?>&dep=<?php echo $cursor['nameDep']; ?>"
+                                                                        onclick="return sure();">Supprimer</a>
+                                                            </td>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                    } ?>
+                                                    </tbody>
+
                                                 </table>
                                             </div>
                                         </div>
@@ -142,7 +186,7 @@ if (isset($_POST["ok"])) {
                                 <div class="item form-group">
                                     <div class="col-md-6 col-sm-6 offset-md-4">
                                         <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
-                                               onclick="window.location='interval.php';"/>
+                                               onclick="window.location='departments.php';"/>
                                     </div>
                                 </div>
 
@@ -164,7 +208,11 @@ if (isset($_POST["ok"])) {
         <!-- /footer content -->
     </div>
 </div>
-
+<script>
+    function sure() {
+        return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
+    }
+</script>
 <!-- jQuery -->
 <script src="../vendors/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap -->

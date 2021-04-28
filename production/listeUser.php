@@ -2,6 +2,17 @@
 include("config.php");
 session_start();
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
+$cursor = $collection->find();
+
+if($UserConnect['role']!=1){
+    header('Location:index.php');
+}
+if(isset($_POST['switch'])){
+    $newdata = array('$set' => array("etat" => 1));
+    $collection->update(array('name' => $name,"email"=>$email), $newdata);
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +26,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
     <title>DataTables | Gentelella</title>
 
     <!-- Bootstrap -->
-    <link href="cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <!--    <link href="cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">-->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -23,6 +34,9 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
     <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="../vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+    <script src="../vendors/switchery/dist/switchery.min.js"></script>
     <!-- Datatables -->
 
     <link href="../vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -68,7 +82,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                     <div class="col-md-12 col-sm-12 ">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Liste des departements</h2>
+                                <h2>Liste des utilisateurs</h2>
 
                                 <div class="clearfix"></div>
                             </div>
@@ -82,45 +96,56 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
-                                                    <th>Nom</th>
-                                                    <th>Nombre des postes</th>
-                                                    <th>Intervalles</th>
-                                                    <th>Action</th>
-                                                    <?php if($UserConnect['role']==1){?>
-                                                        <th>Créee par</th>
-                                                        <th>Date de création</th>
-                                                        <th>Derniére modification par</th>
-                                                        <th>Date et heure de modification</th>
-                                                    <?php }?>
+                                                    <th style="text-align: center;">Nom</th>
+                                                    <th style="text-align: center;">Email</th>
+                                                    <th style="text-align: center;">Telephone</th>
+                                                    <th style="text-align: center;">Mot de passe</th>
+                                                    <th style="text-align: center;">Role</th>
+                                                    <th style="text-align: center;">Etat</th>
+                                                    <th style="text-align: center;">Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <?php
 
-                                                $cursor = $collection_Department->find();
+                                                $cursor = $collection->find();
                                                 foreach ($cursor
 
                                                 as $c) { ?>
                                                 <tr>
-                                                    <td><?php echo $c['nameDep']; ?></td>
-                                                    <td><?php echo $c['number']; ?></td>
-                                                    <td class="last"><a
-                                                                href="nbClients.php?id=<?php echo $c['nameDep']; ?>"><i
-                                                                    class="fa fa-plus"></i></a>&nbsp;&nbsp;&nbsp;<a
-                                                                href="interval.php?id=<?php echo $c['nameDep']; ?>"><i class="fa fa-eye"></i></a></td>
-                                                    <td class="last"><a
-                                                                href="editDep.php?id=<?php echo $c['nameDep']; ?>"><i
-                                                                    class="fa fa-edit"></i></a>&nbsp;&nbsp;&nbsp;<a
-                                                                href="deleteDep.php?id=<?php echo $c['nameDep']; ?>"
-                                                                onclick="return sure();"><i class="fa fa-trash"></i></a>
+                                                    <td style="text-align: center;"><?php echo $c['name']; ?></td>
+                                                    <td style="text-align: center;"><?php echo $c['email']; ?></td>
+                                                    <td style="text-align: center;"><?php echo $c['telephone']; ?></td>
+                                                    <td style="text-align: center;"><?php echo $c['password']; ?></td>
+                                                    <td style="text-align: center;">
+                                                        <?php if ($c['role'] == 1) {
+                                                            echo "Admin";
+                                                        } else echo "User"; ?>
                                                     </td>
-                                                    <?php if($UserConnect['role']==1){?>
+                                                    <td style="text-align: center;" class="last">
+                                                        <div class="">
+                                                            <label>
+                                                                <input type="checkbox" class="js-switch" name="switch" <?php if($UserConnect['role']==1 && $UserConnect['name']== $c['name']){?>  checked disabled <?php } else{?>  checked <?php }?> />
+                                                            </label>
+                                                        </div>
+                                                        &nbsp;&nbsp;&nbsp;
 
-                                                        <td class="last"><?php echo $c['createdBy'];?></td>
-                                                        <td class="last"><?php echo $c['time']['date'];?></td>
-                                                        <td class="last"><?php echo $c['modifiedBy'];?></td>
-                                                        <td class="last"><?php echo $c['editTime']['date'];?></td>
-                                                    <?php }?>
+
+                                                    </td>
+                                                    <td style="text-align: center;" class="last">
+                                                        <!--                                                        <input type="button" class="btn btn-success" value="Connecté" />-->
+                                                        <!--                                                        &nbsp;&nbsp;&nbsp;-->
+
+                                                        <a href="editUser.php?id=<?php echo $c['name']; ?>"><input
+                                                                    type="button" class="btn btn-warning"
+                                                                    value="Modifier"/></a>
+                                                        &nbsp;&nbsp;&nbsp;
+
+                                                        <a href="delUser.php?id=<?php echo $c['name']; ?>"> <input
+                                                                    type="button" class="btn btn-danger"
+                                                                    value="Supprimer" onclick="return sure();"  <?php if($UserConnect['name'] == $c['name']){?>disabled<?php }?>/></a>
+
+                                                    </td>
 
                                                     <?php
                                                     }
@@ -152,8 +177,10 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
 </div>
 <script>
     function sure() {
-        return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
+        return (confirm('Etes-vous sûr de vouloir supprimer cet utilisateur ?'));
     }
+
+
 </script>
 <!-- jQuery -->
 <script src="../vendors/jquery/dist/jquery.min.js"></script>

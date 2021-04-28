@@ -9,7 +9,6 @@ if (isset($_POST["submit"])) {
     $cursor_cost = $collection_coutFixe->findOne(array('foprolos'=>$foprolos,'chargePat' => $chargePat,'prime'=>$prime,'conge'=>$conge));
     if (empty($cursor_cost)) {
         $collection_coutFixe->insert(array('foprolos'=>$foprolos,'chargePat' => $chargePat,'prime'=>$prime,'conge'=>$conge));
-        //header("Location:");
     } else {
         echo "<script>alert(\"Cost already existed\")</script>";
     }
@@ -79,12 +78,12 @@ if (isset($_POST["submit"])) {
                     </div>
                     <div class="title_right">
                         <div class="col-md-5 col-sm-5  form-group pull-right top_search">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search for...">
-                                <span class="input-group-btn">
-										<button class="btn btn-default" type="button">Go!</button>
-									</span>
-                            </div>
+<!--                            <div class="input-group">-->
+<!--                                <input type="text" class="form-control" placeholder="Search for...">-->
+<!--                                <span class="input-group-btn">-->
+<!--										<button class="btn btn-default" type="button">Go!</button>-->
+<!--									</span>-->
+<!--                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -153,7 +152,7 @@ if (isset($_POST["submit"])) {
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
                                             <input class="btn btn-success" name="submit" type="submit" value="Ajouter"/>
-                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler" onclick="window.location='employees.php';"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler" onclick="window.location=''"/>
                                         </div>
                                     </div>
 
