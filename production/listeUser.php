@@ -4,12 +4,21 @@ session_start();
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
 $cursor = $collection->find();
 
-if($UserConnect['role']!=1){
+if ($UserConnect['role'] != "1") {
     header('Location:index.php');
 }
-if(isset($_POST['switch'])){
-    $newdata = array('$set' => array("etat" => 1));
-    $collection->update(array('name' => $name,"email"=>$email), $newdata);
+
+if (isset($_GET['id'])) {
+    $user = $collection->findOne(array("_id" => $_GET['id']));
+
+    if ($_GET['etat'] == "actif") {
+        $new = array('$set' => array('etat' => "1"));
+        $collection->update(array("_id" => new MongoId($_GET['id']) ), $new);
+    } else {
+        $new = array('$set' => array('etat' => "0"));
+        $collection->update(array("_id" => new MongoId($_GET['id'])), $new);
+    }
+    header("location:listeUser.php");
 }
 
 
@@ -118,32 +127,51 @@ if(isset($_POST['switch'])){
                                                     <td style="text-align: center;"><?php echo $c['telephone']; ?></td>
                                                     <td style="text-align: center;"><?php echo $c['password']; ?></td>
                                                     <td style="text-align: center;">
-                                                        <?php if ($c['role'] == 1) {
+                                                        <?php if ($c['role'] == "1") {
                                                             echo "Admin";
                                                         } else echo "User"; ?>
                                                     </td>
+
                                                     <td style="text-align: center;" class="last">
-                                                        <div class="">
+                                                        <?php if ($c['etat'] == "1") { ?>
+
                                                             <label>
-                                                                <input type="checkbox" class="js-switch" name="switch" <?php if($UserConnect['role']==1 && $UserConnect['name']== $c['name']){?>  checked disabled <?php } else{?>  checked <?php }?> />
+                                                                <input type="checkbox" class="js-switch"
+                                                                       name="switch"
+                                                                       value="<?php echo $c['_id']; ?>"
+                                                                       onchange="action(this.value,'desac');"
+                                                                       checked="true"
+
+                                                                />
                                                             </label>
-                                                        </div>
-                                                        &nbsp;&nbsp;&nbsp;
+
+                                                        <?php } else { ?>
+                                                            <div class="">
+                                                                <label>
+                                                                    <input type="checkbox" class="js-switch"
+                                                                           name="switch"
+                                                                           value="<?php echo $c['_id']; ?>"
+                                                                           onchange="action(this.value,'actif');"
+                                                                    />
 
 
+                                                                </label>
+                                                            </div>
+                                                        <?php } ?>
                                                     </td>
-                                                    <td style="text-align: center;" class="last">
-                                                        <!--                                                        <input type="button" class="btn btn-success" value="Connecté" />-->
-                                                        <!--                                                        &nbsp;&nbsp;&nbsp;-->
 
-                                                        <a href="editUser.php?id=<?php echo $c['name']; ?>"><input
+
+                                                    <td style="text-align: center;" class="last">
+
+                                                        <a href="editUser.php?id=<?php echo $c['_id']; ?>"><input
                                                                     type="button" class="btn btn-warning"
                                                                     value="Modifier"/></a>
-                                                        &nbsp;&nbsp;&nbsp;
 
-                                                        <a href="delUser.php?id=<?php echo $c['name']; ?>"> <input
+
+                                                        <a href="delUser.php?id=<?php echo $c['_id']; ?>"> <input
                                                                     type="button" class="btn btn-danger"
-                                                                    value="Supprimer" onclick="return sure();"  <?php if($UserConnect['name'] == $c['name']){?>disabled<?php }?>/></a>
+                                                                    value="Supprimer" onclick="return sure();"
+                                                                    <?php if ($UserConnect['name'] == $c['name']){ ?>disabled<?php } ?>/></a>
 
                                                     </td>
 
@@ -178,6 +206,12 @@ if(isset($_POST['switch'])){
 <script>
     function sure() {
         return (confirm('Etes-vous sûr de vouloir supprimer cet utilisateur ?'));
+    }
+
+    function action(user_id, etat) {
+
+        window.location = "listeUser.php?id=" + user_id + "&etat=" + etat;
+
     }
 
 

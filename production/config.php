@@ -1,5 +1,5 @@
 <?php
-$m = new MongoClient("mongodb://192.168.100.15"); // connexion
+$m = new MongoClient("mongodb://192.168.100.17"); // connexion
 $db = $m->selectDB("exemple");
 $collection = $m->selectCollection($db, 'test');
 $collection_Department = $m->selectCollection($db,'departments');

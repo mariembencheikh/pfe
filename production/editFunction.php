@@ -2,21 +2,22 @@
 include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
-    $dep = $_POST['department'];
+    $dep = $_POST['select'];
     $function = $_POST['function'];
     $salary = $_POST['salary'];
+    $id = $_POST['id'];
 
-    $newData = array('$set' => array('department' => $dep, 'function' => $function, 'salary' => doubleval($salary),'modifiedBy'=>$_SESSION['email'],'editTime'=>new DateTime()));
-    $collection_Employees->update(array('department' => $dep), $newData);
-    header("Location:employees.php");
+    $newData = array('$set' => array('department' => $dep, 'function' => $function, 'salary' => doubleval($salary), 'modifiedBy' => $_SESSION['email'], 'editTime' => new DateTime()));
+    $collection_Employees->update(array('_id' => new MongoId($id)), $newData);
+    header("Location:listeFonctions.php");
 
 
 }
 if (isset($_GET['id'])) {
 
-    $function_edit = $collection_Employees->findOne(array('department'=>$_GET['dep'],'function' => $_GET['id']));
+    $function_edit = $collection_Employees->findOne(array('_id' => new MongoId($_GET['id'])));
 } else
-    header("Location:employees.php");
+    header("Location:listeFonctions.php");
 
 
 ?>
@@ -94,12 +95,21 @@ if (isset($_GET['id'])) {
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="editFunction.php" method="POST">
-                                    <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom du département <span class="required">*</span>
-                                        </label>
+                                    <input type="text" required="required" class="form-control"
+                                           name="id" value="<?php echo $function_edit['_id']; ?>" hidden>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Departement<span
+                                                    class="required">*</span></label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text"  required="required" class="form-control"
-                                                   name="department" value="<?php  echo $function_edit['department'];?>">
+                                            <select class="select2_single form-control" tabindex="-1" name="select"
+                                                    required="required">
+                                                <option></option>
+                                                <?php $cursor = $collection_Department->find()->sort(array('nameDep' => 1));
+                                                foreach ($cursor as $c) {
+                                                    ?>
+                                                    <option <?php if ($c['nameDep'] == $function_edit['department']) { ?> selected<?php } ?> ><?php echo $c['nameDep']; ?></option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -108,7 +118,7 @@ if (isset($_GET['id'])) {
                                             <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text"  name="function" required="required"
+                                            <input type="text" name="function" required="required"
                                                    class="form-control"
                                                    value="<?php echo $function_edit['function']; ?>">
                                         </div>
@@ -118,7 +128,7 @@ if (isset($_GET['id'])) {
                                             <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text"  name="salary"
+                                            <input type="text" name="salary"
                                                    class="form-control" value="<?php echo $function_edit['salary']; ?>">
                                         </div>
                                     </div>
@@ -129,7 +139,7 @@ if (isset($_GET['id'])) {
                                                    value="Modifier"/>
 
                                             <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
-                                                   onclick="window.location='employees.php';"/>
+                                                   onclick="window.location='listeFonctions.php';"/>
 
 
                                         </div>

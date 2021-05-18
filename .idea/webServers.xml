@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="7b09678c-6bed-41c4-98e7-e0987094b58a" name="virtuel" url="http://192.168.100.15">
-        <fileTransfer accessType="SFTP" host="192.168.100.15" port="22" sshConfigId="ba94e128-0280-4a65-890a-675e0f736b8d" sshConfig="helmi@192.168.100.15:22 password" />
+      <webServer id="7b09678c-6bed-41c4-98e7-e0987094b58a" name="virtuel" url="http://192.168.100.17">
+        <fileTransfer accessType="SFTP" host="192.168.100.17" port="22" sshConfigId="ba94e128-0280-4a65-890a-675e0f736b8d" sshConfig="helmi@192.168.100.17:22 password" />
       </webServer>
     </option>
   </component>

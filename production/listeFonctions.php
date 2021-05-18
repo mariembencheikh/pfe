@@ -93,17 +93,20 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                 <tbody>
                                                 <?php
                                                 $cursor = $collection_Employees->find();
-                                                foreach ($cursor as $c) {?>
+                                                $dep=$collection_Department->find();
+                                                foreach ($dep as $d){
+                                                foreach ($cursor as $c) {
+                                                    if($c['department']==$d['nameDep']){?>
                                                    <tr>
-                                                       <td><?php echo $c['department'];?></td>
+                                                       <td><?php  echo $c['department'];?></td>
                                                        <td><?php echo $c['function'];?></td>
                                                        <td><?php echo number_format($c['salary'], 3, ',', ',');?></td>
                                                        <td class="last">
-                                                           <a href="editFunction.php?id=<?php echo $c["function"];?>&dep=<?php echo $c['department'];?>">
+                                                           <a href="editFunction.php?id=<?php echo $c["_id"];?>">
                                                                 <i class="fa fa-edit" ></i>
                                                            </a>
                                                            &nbsp;&nbsp;&nbsp;
-                                                           <a href="deleteFunction.php?id=<?php echo $c["function"];?>&dep=<?php echo $c['department'];?>" onclick="return sure();">
+                                                           <a href="deleteFunction.php?id=<?php echo $c["_id"];?>" onclick="return sure();">
                                                                <i class='fa fa-trash'></i>
                                                            </a>
                                                        </td>
@@ -115,7 +118,9 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                        <?php }?>
                                                    </tr>
                                                     <?php
+                                                    }
 
+                                                }
                                                 }
                                                 $dep = $_SESSION["function"]; ?>
                                                 </tbody>

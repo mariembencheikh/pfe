@@ -29,7 +29,7 @@ if (isset($_POST["submitForm"])) {
             $errMsgR = "Le mot de passe et confirmer mot de passe  doivent correspondre";
 
         } else {
-            $collection->insert(array('name' => $name, 'email' => $userName, 'telephone' => $telephone, 'password' => $userPass, 'role' => 0));
+            $collection->insert(array('name' => $name, 'email' => $userName, 'telephone' => $telephone, 'password' => $userPass, 'role' => "0","etat"=>"0"));
             header("Location:index.php");
         }
     } else {

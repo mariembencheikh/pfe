@@ -20,12 +20,7 @@ foreach ($tab as $item) {
 }
 
 ?>
-<div class="item form-group">
-    <!--        <label class="col-form-label col-md-3 col-sm-3 label-align"> Total de jours</label>-->
-    <div class="col-md-6 col-sm-6 offset-md-5">
-        <input style="height: 35px;width: 75px" disabled value="<?php echo $currentSaison['days']; ?>">
-    </div>
-</div>
+
 <?php foreach ($tabMois as $t) { ?>
     <div class="col-md-9 col-sm-9 ">
         <div class="checkbox">
@@ -57,6 +52,20 @@ foreach ($tab as $item) {
     <?php
 }
 ?>
+
+<div class="item form-group">
+    <label class="col-form-label col-md-3 col-sm-3 label-align">Nb jours</label>
+    <div class="col-md-6 col-sm-6 offset-md-5 ">
+        <input style="height: 40px;width: 75px" disabled value="<?php echo $currentSaison['days']; ?>">
+    </div>
+</div>
+
+<!--        <div class="item form-group">-->
+<!--            <label class="col-form-label col-md-3 col-sm-3 label-align">Total de jours</label>-->
+<!--    <div class="col-md-6 col-sm-6 offset-md-5">-->
+<!--        <input style="height: 35px;width: 75px" disabled value="--><?php //echo $currentSaison['days']; ?><!--">-->
+<!--    </div>-->
+<!--</div>-->
 
 
 

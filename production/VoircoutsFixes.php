@@ -1,7 +1,9 @@
 <?php
 include("config.php");
 session_start();
+$cursor = $collection_coutFixe->find();
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +49,6 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                 <!-- /menu footer buttons -->
                 <?php include("menuFooter.html"); ?>
                 <!-- /menu footer buttons -->
-
             </div>
         </div>
 
@@ -60,71 +61,85 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
         <!-- page content -->
         <div class="right_col" role="main">
             <div class="">
-
-
                 <div class="clearfix"></div>
 
                 <div class="row">
                     <div class="col-md-12 col-sm-12 ">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Liste des departements</h2>
-
+                                <h2>Cout fixe</h2>
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="card-box table-responsive">
-
-
                                             <table id="datatable" class="table table-striped table-bordered"
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
-                                                    <th>Nom</th>
-                                                    <th>Nombre des postes</th>
-                                                    <th>Intervalles</th>
-                                                    <th>Action</th>
+                                                    <th>Note RBE</th>
+                                                    <th>Cout</th>
                                                     <?php if($UserConnect['role']==1){?>
                                                         <th>Créee par</th>
                                                         <th>Date de création</th>
                                                         <th>Derniére modification par</th>
-                                                        <th>Date et heure de modification</th>
+                                                        <th>Date et heure de  modification</th>
                                                     <?php }?>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <?php
+                                                $cursor = $collection_coutFixe->find();
+                                                foreach ($cursor as $c) {?>
+                                                    <tr>
+                                                        <td>Salaire brut fixe employés </td>
+                                                        <td><?php echo number_format($c['salEmp'], 3, ',', ',');?></td>
+                                                        <?php if($UserConnect['role']==1){?>
+                                                            <td><?php echo $c['createdBy'];?></td>
+                                                            <td><?php echo $c['time']['date'];?></td>
+                                                            <td><?php echo $c['modifiedBy'];?></td>
+                                                            <td><?php echo $c['editTime']['date'];?></td>
+                                                        <?php }?>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Salaire administrateur Salarié</td>
+                                                        <td><?php echo number_format($c['salAdmin'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Salaire administrateur Régime Indépendant</td>
+                                                        <td><?php echo number_format($c['salAdminIn'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>TFP & FOPROLOS</td>
+                                                        <td><?php echo number_format($c['foprolos'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Charge sociale patronale</td>
+                                                        <td><?php echo number_format($c['chargePat'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Charge sociale Administrateur</td>
+                                                        <td><?php echo number_format($c['chargeAdmin'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Provision Prime</td>
+                                                        <td><?php echo number_format($c['prime'], 3, ',', ',');?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Provision congé</td>
+                                                        <td><?php echo number_format($c['conge'], 3, ',', ',');?></td>
+                                                    </tr>
 
-                                                $cursor = $collection_Department->find();
-                                                foreach ($cursor
 
-                                                as $c) { ?>
-                                                <tr>
-                                                    <td><?php echo $c['nameDep']; ?></td>
-                                                    <td><?php echo $c['number']; ?></td>
-                                                    <td class="last"><a
-                                                                href="nbClients.php?id=<?php echo $c['nameDep']; ?>"><i
-                                                                    class="fa fa-plus"></i></a>&nbsp;&nbsp;&nbsp;<a
-                                                                href="interval.php?id=<?php echo $c['nameDep']; ?>"><i class="fa fa-eye"></i></a></td>
-                                                    <td class="last"><a
-                                                                href="editDep.php?id=<?php echo $c['_id']; ?>"><i
-                                                                    class="fa fa-edit"></i></a>&nbsp;&nbsp;&nbsp;<a
-                                                                href="deleteDep.php?id=<?php echo $c['_id']; ?>&&dep=<?php echo $c['nameDep'];?>"
-                                                                onclick="return sure();"><i class="fa fa-trash"></i></a>
-                                                    </td>
-                                                    <?php if($UserConnect['role']==1){?>
 
-                                                        <td class="last"><?php echo $c['createdBy'];?></td>
-                                                        <td class="last"><?php echo $c['time']['date'];?></td>
-                                                        <td class="last"><?php echo $c['modifiedBy'];?></td>
-                                                        <td class="last"><?php echo $c['editTime']['date'];?></td>
-                                                    <?php }?>
+                                                    <input type="submit" class="btn btn-success" name="edit"
+                                                           value="Modifier" onclick="window.location='editCoutFixe.php?id=<?php echo $c['_id'];?>'">
 
                                                     <?php
-                                                    }
-                                                    $dep = $_SESSION["nameDep"]; ?>
+
+                                                }
+                                                ?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -151,8 +166,9 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
     </div>
 </div>
 <script>
-    function sure() {
-        return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
+    function sure()
+    {
+        return(confirm('Etes-vous sûr de vouloir supprimer cette fonction ?'));
     }
 </script>
 <!-- jQuery -->

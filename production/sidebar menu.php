@@ -2,6 +2,8 @@
 include("config.php");
 session_start();
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
+$cursor = $collection_coutFixe->find();
+
 if (empty($UserConnect)) {
     header("Location:login.php");
 }
@@ -21,11 +23,12 @@ if (empty($UserConnect)) {
 
 <!-- menu profile quick info -->
 <div class="profile clearfix">
-    <div class="profile_pic">
-        <img src="images/img.jpg" alt="..." class="img-circle profile_img">
-    </div>
+    <!--    <div class="profile_pic">-->
+    <!--        <img src="images/img.jpg" alt="..." class="img-circle profile_img">-->
+    <!--    </div>-->
     <div class="profile_info">
 
+        <span>Bienvenue,</span>
         <h2><?php echo $UserConnect['name'] ?></h2>
     </div>
 </div>
@@ -47,47 +50,48 @@ if (empty($UserConnect)) {
                 </li>
             <?php } ?>
 
-            <li><a><i class="fa fa-desktop"></i>  Paramétrage <span class="fa fa-chevron-down"></span></a>
+            <li><a><i class="fa fa-desktop"></i> Paramétrage <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                    <li><a>Départments<span class="fa fa-chevron-down"></span></a>
+                    <li><a>Départements<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li class="sub_menu"><a href="departments.php">Liste des départements</a>
                             </li>
-                            <li><a href="ajoutDepartment.php">Ajouter département</a>
+                            <li>
+                                <a href="ajoutDepartment.php" <?php if ($UserConnect['etat'] == 0) { ?> onclick="return false;" style="cursor: default;"<?php } ?>>Ajouter
+                                    département</a>
                             </li>
                         </ul>
                     </li>
-                    </li>
+
                     <li><a>Fonctions<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li class="sub_menu"><a href="employees.php">Liste des fonctions</a>
+                            <li class="sub_menu"><a href="listeFonctions.php">Liste des fonctions</a>
                             </li>
-                            <li><a href="ajoutFunction.php">Ajouter fonction</a>
+                            <li>
+                                <a href="ajoutFunction.php" <?php if ($UserConnect['etat'] == 0) { ?> onclick="return false;" style="cursor: default;"<?php } ?>>Ajouter
+                                    fonction</a>
                             </li>
                         </ul>
                     </li>
+                    <li><a>Les couts fixes<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li class="sub_menu"><a href="VoircoutsFixes.php">Voir</a></li>
+                            <li>
+                                <a href="AjoutcoutsFixes.php" <?php if ($UserConnect['etat'] == 0) { ?> onclick="return false;" style="cursor: default;"<?php } ?>>Ajouter</a>
+                            </li>
+                        </ul>
                     </li>
-                    <li><a href="coutsFixes.php">Les couts fixes</a></li>
-                    <li><a href="saison.php">Saisons</a></li>
-                    <!--                    <li><a>Saisons<span class="fa fa-chevron-down"></span></a>-->
-                    <!--                        <ul class="nav child_menu">-->
-                    <!--                            <li class="sub_menu"><a href="voirSaison.php">Voir</a>-->
-                    <!--                            </li>-->
-                    <!--                            <li><a href="saison.php">Ajouter </a>-->
-                    <!--                            </li>-->
-                    <!--                        </ul>-->
-                    <!--                    </li>-->
-                    <!--                    <li><a>Echelle<span class="fa fa-chevron-down"></span></a>-->
-                    <!--                        <ul class="nav child_menu">-->
-                    <!--                            <li class="sub_menu"><a href="table.php">Par jour</a>-->
-                    <!--                            </li>-->
-                    <!--                            <li><a href="table.php">Par saison</a>-->
-                    <!--                            </li>-->
-                    <!--                        </ul>-->
-                    <!--                    </li>-->
-                    <li><a href="table.php">Echelle</a></li>
+
+
 
                     </li>
+                    <li><a href="saison.php">Saisons</a>
+                    </li>
+
+
+                    <li><a href="table.php">Echelle</a></li>
+
+
                     <li><a>Cout salariale<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li class="sub_menu"><a href="depSalaire.php">Par jour</a>
@@ -100,6 +104,15 @@ if (empty($UserConnect)) {
                                 </ul>
                             </li>
                         </ul>
+                    </li>
+                    <li><a>Les charges<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+
+                            <li class="sub_menu"><a href="chargeTotale.php">Totale</a></li>
+                            <li class="sub_menu"><a href="chargeFixe.php">Fixe</a></li>
+                            <li class="sub_menu"><a href="chargeVariable.php">Variables</a></li>
+                        </ul>
+
                     </li>
 
 

@@ -1,17 +1,21 @@
 <?php
 include("config.php");
 session_start();
+
 if (isset($_POST["submit"])) {
     $nameDep = $_POST['nameDep'];
     $numberEmp = $_POST['nbEmp'];
-    $newdata = array('$set' => array("nameDep" => $nameDep, "number" => $numberEmp,"modifiedBy"=>$_SESSION['email'],"editTime"=>new DateTime()));
-    $collection_Department->update(array('nameDep' => $nameDep), $newdata);
+    $id = $_POST['id'];
+
+    $newdata = array('$set' => array("nameDep" => $nameDep, "number" => $numberEmp, "modifiedBy" => $_SESSION['email'], "editTime" => new DateTime()));
+    $collection_Department->update(array('_id' => new MongoId($id)), $newdata);
     header("Location:departments.php");
 }
-if (isset($_GET['id'])){
-    $dep_edit = $collection_Department->findOne(array('nameDep' => $_GET['id']));
-}
-else
+
+
+if (isset($_GET['id'])) {
+    $dep_edit = $collection_Department->findOne(array('_id' => new MongoId($_GET['id'])));
+} else
     header("Location:departments.php");
 
 
@@ -90,16 +94,20 @@ else
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="editDep.php" method="POST">
+                                    <input type="text" required="required" class="form-control"
+                                           name="id" value="<?php echo $dep_edit['_id']; ?>" hidden>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom departement <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom
+                                            departement <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
                                             <input type="text" id="name" required="required" class="form-control "
-                                                   name="nameDep" value="<?php  echo $dep_edit['nameDep'];?>">
+                                                   name="nameDep" value="<?php echo $dep_edit['nameDep']; ?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre des postes <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre
+                                            des postes <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
                                             <input type="number" id="number" name="nbEmp" required="required"
@@ -109,7 +117,8 @@ else
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
-                                            <input class="btn btn-success" name="submit" type="submit" value="Modifier"/>
+                                            <input class="btn btn-success" name="submit" type="submit"
+                                                   value="Modifier"/>
 
                                             <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
                                                    onclick="window.location='departments.php';"/>

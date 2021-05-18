@@ -2,9 +2,9 @@
 include "config.php";
 session_start();
 
-$cursor=$collection_Employees->findOne(array('function'=>$_GET['id']));
+$cursor=$collection_Employees->findOne(array('_id'=>new MongoId($_GET['id'])));
 
-$collectionEmp = $collection_Employees->remove(array('function' => $_GET['id'] ) , array("justOne"=> true));
+$collectionEmp = $collection_Employees->remove(array('_id' => new MongoId($_GET['id'])) , array("justOne"=> true));
 
-header("Location:employees.php");
+header("Location:listeFonctions.php");
 

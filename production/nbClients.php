@@ -30,6 +30,33 @@ if (isset($_POST["ok"])) {
             }
         } else {
             echo "<script>alert(\"existe\")</script>";
+//            ?>
+<!---->
+<!--<script>$(function() {-->
+<!--        $('#myModal').modal('show');-->
+<!--    });-->
+<!--</script>-->
+<!--            <div id="myModal" class="modal fade" role="dialog">-->
+<!--                <div class="modal-dialog">-->
+<!---->
+<!--                    <!-- Modal content-->-->
+<!--                    <div class="modal-content">-->
+<!--                        <div class="modal-header">-->
+<!--                            <button type="button" class="close" data-dismiss="modal">&times;</button>-->
+<!--                            <h4 class="modal-title">Modal Header</h4>-->
+<!--                        </div>-->
+<!--                        <div class="modal-body">-->
+<!--                            <p>Some text in the modal.</p>-->
+<!--                        </div>-->
+<!--                        <div class="modal-footer">-->
+<!--                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!---->
+<!--                </div>-->
+<!--            </div>-->
+<!---->
+<!--            --><?php
         }
 
 
@@ -151,7 +178,7 @@ if (isset($_GET['id'])) {
 
                                                         return $a['ordre'] - $b['ordre'];
                                                     });
-                                                    $collection_Department->update(array('nameDep'=>$cursor['nameDep']),array('$set'=>array('interval'=>$cursor['interval'])));
+                                                    $collection_Department->update(array('nameDep' => $cursor['nameDep']), array('$set' => array('interval' => $cursor['interval'])));
 
                                                     ?>
                                                     <input hidden value="<?php echo $cursor['nameDep']; ?>" name="dep">
@@ -212,7 +239,12 @@ if (isset($_GET['id'])) {
     function sure() {
         return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
     }
+
+
+
 </script>
+
+
 <!-- jQuery -->
 <script src="../vendors/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap -->

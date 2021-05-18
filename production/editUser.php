@@ -1,20 +1,21 @@
 <?php
 include("config.php");
 session_start();
+
 if (isset($_POST["submit"])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $tel = $_POST['tel'];
     $pwd = $_POST['pwd'];
-    $role= $_POST['role'];
-    $newdata = array('$set' => array("name" => $name, "email" => $email,"telephone"=>$tel,'role'=>$role));
-    $collection->update(array('name' => $name,"email"=>$email), $newdata);
+    $role = $_POST['role'];
+    $id=$_POST['id'];
+    $newdata = array('$set' => array("name" => $name, "email" => $email, "telephone" => $tel, "password" => $pwd, "role" => $role));
+    $collection->update(array("_id" => new MongoId($id)), $newdata);
     header("Location:listeUser.php");
 }
 if (isset($_GET['id'])) {
-    $user = $collection->findOne(array('name' => $_GET['id']));
-}
-else
+    $user = $collection->findOne(array("_id" => new MongoId($_GET['id'])));
+} else
     header("Location:listeUser.php");
 
 
@@ -93,6 +94,8 @@ else
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="editUser.php" method="POST">
+                                    <input type="text" required="required" class="form-control "
+                                           name="id" value="<?php echo $user['_id']; ?>" hidden>
                                     <div class="item form-group">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span
                                                     class="required">*</span>
@@ -108,7 +111,7 @@ else
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
                                             <input type="text" name="email" required="required"
-                                                   class="form-control" value="<?php echo $user['email']; ?>">
+                                                   class="form-control" value="<?php echo $user['email'];?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
@@ -129,6 +132,7 @@ else
                                                    class="form-control" value="<?php echo $user['password']; ?>">
                                         </div>
                                     </div>
+
                                     <div class="item form-group">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Role
                                             <span class="required">*</span>
@@ -137,17 +141,15 @@ else
 
                                             <select class="select2_single form-control" tabindex="-1" name="role"
                                                     required="required">
-                                                <option value="1" <?php if ($user['role'] == 1) { ?> selected<?php } ?> >
+                                                <option value=1 <?php if ($user['role'] == 1) { ?> selected<?php } ?> >
                                                     Admin
                                                 </option>
-                                                <option value="0" <?php if ($user['role'] == 0) { ?> selected<?php } ?> <?php if ($user['role'] == 1){ ?> disabled<?php }?> >
+                                                <option value=0 <?php if ($user['role'] == 0) { ?> selected<?php } ?> <?php if ($user['role'] == 1 && $user['email'] == $_SESSION['email']) { ?> disabled<?php } ?> >
                                                     User
                                                 </option>
 
                                             </select>
-                                            <!--                                            <input type="text"  name="email" required="required"-->
-                                            <!--                                                   class="form-control" value="-->
-                                            <?php //echo $user['role']; ?><!--">-->
+
                                         </div>
                                     </div>
                                     <div class="ln_solid"></div>

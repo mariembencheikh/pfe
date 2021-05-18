@@ -1,26 +1,24 @@
 <?php
 include("config.php");
 session_start();
+
 if (isset($_POST["submit"])) {
-    $function = $_POST['function'];
-    $salary = $_POST['salary'];
-    $select=$_POST['select'];
-    $cursorDepartment=$collection_Department->findOne(array('nameDep'=>$select));
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];
+    $pwd = $_POST['pwd'];
+    $id = $_POST['id'];
 
-    $cursor = $collection_Employees->findOne(array('department'=>$select,'function' => $function));
-    if (empty($cursor)){
+    $newdata = array('$set' => array("name" => $name, "email" => $email, "telephone" => $tel, "password" => $pwd));
+    $collection->update(array("_id" => new MongoId($id)), $newdata);
+    header("Location:profile.php");
+}
+if (isset($_GET['id'])) {
+    $user = $collection->findOne(array("_id" => new MongoId($_GET['id'])));
+} else
+    header("Location:profile.php");
 
-        $collection_Employees->insert(array('department'=>$select,'function' => $function, 'salary' => doubleval($salary),'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
-        header("Location:listeFonctions.php");
-    } else {
-        $_SESSION['errMsg'] = "Fonction existe";
-    }
-}
-$UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
-if($UserConnect['etat']== 0 ){
-    header("Location:index.php");
-}
-$_SESSION["function"] = $function;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +70,6 @@ $_SESSION["function"] = $function;
             </div>
         </div>
 
-
         <!-- top navigation -->
         <?php include("topNavigation.php"); ?>
         <!-- /top navigation -->
@@ -82,7 +79,7 @@ $_SESSION["function"] = $function;
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Ajouter fonction</h3>
+                        <h3>Modifier mon profile</h3>
                     </div>
 
 
@@ -96,53 +93,55 @@ $_SESSION["function"] = $function;
                             </div>
                             <div class="x_content">
                                 <br/>
-                                <form class="form-horizontal form-label-left" action="ajoutFunction.php"  method="POST">
-                                    <div id="errMsg">
-                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
-                                    </div>
-                                    <br>
-                                    <?php unset($_SESSION['errMsg']); ?>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Departement<span class="required">*</span></label>
+                                <form class="form-horizontal form-label-left" action="editUser.php" method="POST">
+                                    <input type="text" required="required" class="form-control "
+                                           name="id" value="<?php echo $user['_id']; ?>" hidden>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span
+                                                    class="required">*</span>
+                                        </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <select class="select2_single form-control" tabindex="-1" name="select" required="required">
-                                                <option></option>
-                                                <?php  $cursor = $collection_Department->find()->sort(array('nameDep'=>1));
-                                                foreach ($cursor as $c){
-                                                    echo "<option>".$c['nameDep']."</option>";
-                                                }
-                                                $dep=$_SESSION["nameDep"];?>
-                                            </select>
+                                            <input type="text" required="required" class="form-control "
+                                                   name="name" value="<?php echo $user['name']; ?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align"
-                                               for="name">Fonction<span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Email
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="name" required="required" class="form-control "
-                                                   name="function">
+                                            <input type="text" name="email" required="required"
+                                                   class="form-control" value="<?php echo $user['email']; ?>">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align"
-                                               for="number">Salaire
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Téléphone
+                                            <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" step="any" name="salary"
-                                                   class="form-control">
+                                            <input type="number" name="tel" required="required"
+                                                   class="form-control" value="<?php echo $user['telephone']; ?>">
                                         </div>
                                     </div>
+                                    <div class="item form-group">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Mot de
+                                            passe <span class="required">*</span>
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 ">
+                                            <input type="text" name="pwd" required="required"
+                                                   class="form-control" value="<?php echo $user['password']; ?>">
+                                        </div>
+                                    </div>
+
 
                                     <div class="ln_solid"></div>
-
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
+                                            <input class="btn btn-success" name="submit" type="submit"
+                                                   value="Modifier"/>
 
-
-                                            <input class="btn btn-success" name="submit" type="submit" value="Ajouter"/>
-                                            <input class="btn btn-primary" name="cancel" type="reset" value="Annuler"
-                                                   onclick="window.location='listeFonctions.php';"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
+                                                   onclick="window.location='profile.php';"/>
 
 
                                         </div>

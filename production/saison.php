@@ -141,13 +141,13 @@ if (isset($_GET['submit'])) {
 
                                         <div class="col-md-2 col-sm-2 " id="selectM">
                                         </div>
-
+                                        &nbsp;&nbsp;&nbsp;
 
                                         <div class="item form-group">
                                             <div class="col-md-6 col-sm-6 offset-md-5">
                                                 <input class="btn btn-primary" name="submit" id="ok"
                                                        type="submit"
-                                                       value="submit"/>
+                                                       value="Enregistrer"/>
                                             </div>
                                         </div>
                                 </form>

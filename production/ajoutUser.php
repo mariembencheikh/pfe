@@ -10,7 +10,7 @@ if (isset($_POST["submit"])) {
     $errmsg='';
     $fetch=$collection->findOne(array("email" => $email));
     if(empty($fetch)){
-        $collection->insert(array("name" => $name, "email" => $email,"telephone"=>$tel,'password'=>$pwd,'role'=>$role));
+        $collection->insert(array("name" => $name, "email" => $email,"telephone"=>$tel,'password'=>$pwd,'role'=>$role,"etat"=>"0"));
         header("Location:listeUser.php");
     }
     else{

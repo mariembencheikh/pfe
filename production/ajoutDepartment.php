@@ -1,20 +1,24 @@
 <?php
 include("config.php");
 session_start();
-if(isset($_POST["submit"])) {
-    $name=$_POST['nameDep'];
-    $number=$_POST['nbEmp'];
-    $table=array();
+$name = $_POST['nameDep'];
+$number = $_POST['nbEmp'];
+$table = array();
+if (isset($_POST["submit"])) {
+
     $cursor = $collection_Department->findOne(array('nameDep' => $name));
     if (empty($cursor)) {
-        $collection_Department->insert(array('nameDep' => $name, 'number'=>$number,'interval'=>$table,'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
+        $collection_Department->insert(array('nameDep' => $name, 'number' => $number, 'interval' => $table, 'createdBy' => $_SESSION['email'], 'time' => new DateTime()));
         header("Location:departments.php");
-    }
-    else{
+    } else {
         $_SESSION['errMsg'] = "Département existe";
     }
 }
-$_SESSION["nameDep"]=$name;
+$UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
+if ($UserConnect['etat'] == 0) {
+    header("Location:index.php");
+}
+$_SESSION["nameDep"] = $name;
 ?>
 
 <!DOCTYPE html>
@@ -57,11 +61,11 @@ $_SESSION["nameDep"]=$name;
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <!-- sidebar menu -->
-                <?php include("sidebar menu.php");?>
+                <?php include("sidebar menu.php"); ?>
                 <!-- /sidebar menu -->
 
                 <!-- /menu footer buttons -->
-                <?php include ("menuFooter.html");?>
+                <?php include("menuFooter.html"); ?>
                 <!-- /menu footer buttons -->
                 <!-- /menu footer buttons -->
             </div>
@@ -69,7 +73,7 @@ $_SESSION["nameDep"]=$name;
 
 
         <!-- top navigation -->
-        <?php include("topNavigation.php");?>
+        <?php include("topNavigation.php"); ?>
         <!-- /top navigation -->
 
         <!-- page content -->
@@ -90,34 +94,42 @@ $_SESSION["nameDep"]=$name;
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
-                                <br />
-                                <form class="form-horizontal form-label-left" action="ajoutDepartment.php" method="POST">
+                                <br/>
+                                <form class="form-horizontal form-label-left" action="ajoutDepartment.php"
+                                      method="POST">
                                     <div id="errMsg">
-                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
+                                        <p style="color: red;"><b><?php if (!empty($_SESSION['errMsg'])) {
+                                                    echo $_SESSION['errMsg'];
+                                                } ?></b><br/></p>
                                     </div>
                                     <br>
                                     <?php unset($_SESSION['errMsg']); ?>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name"  >Nom departement <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom
+                                            departement <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="text" id="name" required="required" class="form-control " name="nameDep">
+                                            <input type="text" id="name" required="required" class="form-control "
+                                                   name="nameDep">
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre des postes <span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre
+                                            des postes <span class="required">*</span>
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" name="nbEmp" required="required" class="form-control">
+                                            <input type="number" id="number" name="nbEmp" required="required"
+                                                   class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
-                                            <input  class="btn btn-success" name="submit"  type="submit" value="Ajouter" />
+                                            <input class="btn btn-success" name="submit" type="submit" value="Ajouter"/>
 
-                                           <input  class="btn btn-primary" name="cancel"  type="button" value="Annuler" onclick="window.location='departments.php';"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
+                                                   onclick="window.location='departments.php';"/>
 
 
                                         </div>
@@ -179,4 +191,5 @@ $_SESSION["nameDep"]=$name;
 <!-- Custom Theme Scripts -->
 <script src="../build/js/custom.min.js"></script>
 
-</body></html>
+</body>
+</html>
