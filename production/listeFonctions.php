@@ -100,7 +100,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                    <tr>
                                                        <td><?php  echo $c['department'];?></td>
                                                        <td><?php echo $c['function'];?></td>
-                                                       <td><?php echo number_format($c['salary'], 3, ',', ',');?></td>
+                                                       <td><?php echo number_format($c['salary'], 3, '.', '');?></td>
                                                        <td class="last">
                                                            <a href="editFunction.php?id=<?php echo $c["_id"];?>">
                                                                 <i class="fa fa-edit" ></i>

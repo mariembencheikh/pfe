@@ -29,7 +29,7 @@ if (isset($_POST["submitForm"])) {
             $errMsgR = "Le mot de passe et confirmer mot de passe  doivent correspondre";
 
         } else {
-            $collection->insert(array('name' => $name, 'email' => $userName, 'telephone' => $telephone, 'password' => $userPass, 'role' => "0","etat"=>"0"));
+            $collection->insert(array('name' => $name, 'email' => $userName, 'telephone' => $telephone, 'password' => $userPass, 'role' => "0", "etat" => "0"));
             header("Location:index.php");
         }
     } else {
@@ -78,7 +78,7 @@ $_SESSION["email"] = $userName;
             <section class="login_content">
                 <form method="POST">
                     <h1>Connexion</h1>
-                    <div id="errMsg">
+                    <div id="errMsg" style="color: red">
                         <?php if (!empty($errMsg)) {
                             echo $errMsg;
                         } ?>
@@ -118,14 +118,14 @@ $_SESSION["email"] = $userName;
                 <form method="POST">
 
                     <h1>Créer un compte</h1>
-                    <div id="errMsgRegP">
+                    <div id="errMsgRegP" style="color: red">
                         <?php if (!empty($errMsgR)) {
                             echo $errMsgR;
                         } ?>
                     </div>
                     <br>
                     <?php unset($errMsgR); ?>
-                    <div id="errMsgReg">
+                    <div id="errMsgReg" style="color: red">
                         <?php if (!empty($errMsgR)) {
                             echo $errMsgR;
                         } ?>
@@ -137,8 +137,11 @@ $_SESSION["email"] = $userName;
                                style="color: #0f0f0f" value="<?php echo $name ?>"/>
                     </div>
                     <div>
-                        <input type="email" name="email" class="form-control" placeholder="Email" style="color: #0f0f0f"
+
+                        <input type="email" pattern="[^ @]*@[^ @]*" name="email" class="form-control"
+                               placeholder="Email" style="color: #0f0f0f"
                                value="<?php echo $userName ?>" required=""/>
+
                     </div>
                     <div>
                         <input type="text" name="telephone" class="form-control" placeholder="Téléphone"

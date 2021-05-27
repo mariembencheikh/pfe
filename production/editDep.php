@@ -4,10 +4,9 @@ session_start();
 
 if (isset($_POST["submit"])) {
     $nameDep = $_POST['nameDep'];
-    $numberEmp = $_POST['nbEmp'];
     $id = $_POST['id'];
 
-    $newdata = array('$set' => array("nameDep" => $nameDep, "number" => $numberEmp, "modifiedBy" => $_SESSION['email'], "editTime" => new DateTime()));
+    $newdata = array('$set' => array("nameDep" => $nameDep, "modifiedBy" => $_SESSION['email'], "editTime" => new DateTime()));
     $collection_Department->update(array('_id' => new MongoId($id)), $newdata);
     header("Location:departments.php");
 }
@@ -105,15 +104,7 @@ if (isset($_GET['id'])) {
                                                    name="nameDep" value="<?php echo $dep_edit['nameDep']; ?>">
                                         </div>
                                     </div>
-                                    <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre
-                                            des postes <span class="required">*</span>
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" name="nbEmp" required="required"
-                                                   class="form-control" value="<?php echo $dep_edit['number']; ?>">
-                                        </div>
-                                    </div>
+
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">

@@ -97,14 +97,14 @@ foreach ($salaire as $item) {
                                                     <thead class="headings">
                                                     <tr>
                                                         <th style="text-align: center;">Département</th>
-                                                        <th style="text-align: center; vertical-align: middle;">
+                                                        <th style="text-align: center;">
                                                             <?php echo $dep['interval'][0]['n1']; ?>
                                                             -
                                                             <?php echo $dep['interval'][0]['n2'] * $saison['days']; ?>
                                                         </th>
 
                                                         <?php for ($j = 1; $j < count($dep['interval']); $j++) { ?>
-                                                            <th style="text-align: center; vertical-align: middle;">
+                                                            <th style="text-align: center;">
                                                                 <?php echo ($dep['interval'][$j - 1]['n2'] * $saison['days']) + 1; ?>
                                                                 -
                                                                 <?php echo $dep['interval'][$j]['n2'] * $saison['days']; ?>
@@ -127,7 +127,7 @@ foreach ($salaire as $item) {
 
 
                                                     <tr>
-                                                        <td style="text-align: center; vertical-align: middle;"> <?php echo $dep['nameDep']; ?></td>
+                                                        <td style="text-align: center;"> <?php echo $dep['nameDep']; ?></td>
 
                                                         <?php
                                                         $depp = $dep['nameDep'];
@@ -142,13 +142,13 @@ foreach ($salaire as $item) {
                                                             });
                                                             while ($i < count($a)) {
 
-                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['moyenne']*$dep['interval'][$j]['n2'] * $saison['days'];
+                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['moyenne']  * $saison['days'];
 
 
                                                                 $i++;
                                                             }
                                                             ?>
-                                                            <td>
+                                                            <td style="text-align: right">
                                                                 <?php
 
 
@@ -156,38 +156,19 @@ foreach ($salaire as $item) {
 
 
                                                                     ?>
-                                                                    <table style=" margin-left: auto; margin-right: auto;">
+                                                                    <div class="form-group row ">
+                                                                        <label class="control-label col-md-12 col-sm-3 "><?php echo number_format($filtre_interval[$x]['salaireTotale']['moyenne']  * $saison['days'], 3, ',', ','); ?></label>
+                                                                    </div>
 
-                                                                        <tr>
-                                                                            <td>
-
-                                                                                <input
-
-                                                                                    value="<?php echo number_format($filtre_interval[$x]['salaireTotale']['moyenne']*$dep['interval'][$j]['n2'] * $saison['days'], 3, ',', ','); ?>"
-                                                                                    disabled
-                                                                                    style="height: 35px;width: 120px"
-                                                                                >
-
-                                                                            </td>
-                                                                        </tr>
-
-                                                                    </table>
                                                                     <?php
 
 
                                                                 } else {
                                                                     ?>
-                                                                    <table style=" margin-left: auto; margin-right: auto;">
-                                                                        <tr>
-                                                                            <td>
-                                                                                <input
+                                                                    <div class="form-group row ">
+                                                                        <label  class="control-label col-md-12 col-sm-3 "><?php echo number_format(0, 3, ',', ','); ?></label>
+                                                                    </div>
 
-                                                                                    value="<?php echo number_format(0, 3, ',', ','); ?>"
-                                                                                    disabled
-                                                                                    style="height: 35px;width: 120px">
-                                                                            </td>
-                                                                        </tr>
-                                                                    </table>
                                                                     <?php
                                                                 }
 
@@ -208,46 +189,21 @@ foreach ($salaire as $item) {
 
                                                         ?>
 
-                                                        <td style="text-align:center;">
-
-                                                            <table style=" margin-left: auto; margin-right: auto;">
-                                                                <tr>
-                                                                    <td>
-                                                                        <?php
-
-                                                                        $Total += $TotSaison1;
-                                                                        ?>
-                                                                        <input style="height: 35px;width: 120px"
-                                                                               ;
-                                                                               name="salSaison1"
-
-                                                                               value="<?php echo number_format($Total, 3, ',', ',');
-                                                                               ?>"
-                                                                               disabled="disabled">
-
-                                                                        <?php
+                                                        <td>
 
 
-                                                                        ?>
+                                                            <?php
+
+                                                            $Total += $TotSaison1;
+                                                            ?>
+                                                            <div class="form-group row " style="vertical-align: middle; text-align: right;" >
+                                                                <label  class="control-label col-md-12 col-sm-3 "><?php echo number_format($Total, 3, ',', ','); ?></label>
+                                                            </div>
 
 
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
 
                                                         </td>
-                                                        <!--                                                        <td style="vertical-align: middle; text-align: center;">-->
-                                                        <!---->
-                                                        <!--                                                            <input-->
-                                                        <!--                                                                    value="--><?php
-                                                        //                                                                    echo number_format($Total, 3, ',', ',');
-                                                        //
-                                                        //                                                                    ?><!--" disabled-->
-                                                        <!--                                                                    style="height: 35px;width: 75px" ;-->
-                                                        <!--                                                            >-->
-                                                        <!---->
-                                                        <!---->
-                                                        <!--                                                        </td>-->
+
                                                     </tr>
                                                     <?php
 
@@ -307,7 +263,6 @@ foreach ($salaire as $item) {
 
 </body>
 </html>
-
 
 
 

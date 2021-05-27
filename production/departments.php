@@ -30,6 +30,13 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
     <link href="../vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="../vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
@@ -83,7 +90,6 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                 <thead>
                                                 <tr>
                                                     <th>Nom</th>
-                                                    <th>Nombre des postes</th>
                                                     <th>Intervalles</th>
                                                     <th>Action</th>
                                                     <?php if($UserConnect['role']==1){?>
@@ -103,7 +109,6 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                 as $c) { ?>
                                                 <tr>
                                                     <td><?php echo $c['nameDep']; ?></td>
-                                                    <td><?php echo $c['number']; ?></td>
                                                     <td class="last"><a
                                                                 href="nbClients.php?id=<?php echo $c['nameDep']; ?>"><i
                                                                     class="fa fa-plus"></i></a>&nbsp;&nbsp;&nbsp;<a
@@ -112,7 +117,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                                 href="editDep.php?id=<?php echo $c['_id']; ?>"><i
                                                                     class="fa fa-edit"></i></a>&nbsp;&nbsp;&nbsp;<a
                                                                 href="deleteDep.php?id=<?php echo $c['_id']; ?>&&dep=<?php echo $c['nameDep'];?>"
-                                                                onclick="return sure();"><i class="fa fa-trash"></i></a>
+                                                                class="del-btn"><i class="fa fa-trash"></i></a>
                                                     </td>
                                                     <?php if($UserConnect['role']==1){?>
 
@@ -151,9 +156,27 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
     </div>
 </div>
 <script>
-    function sure() {
-        return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
-    }
+    // function sure() {
+    //     return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
+    // }
+    $('.del-btn').on('click',function(e){
+        e.preventDefault();
+        const href = $(this).attr('href')
+        Swal.fire({
+            title: 'Are you sure to delete?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
+                document.location.href = href;
+
+            }
+        })
+    })
 </script>
 <!-- jQuery -->
 <script src="../vendors/jquery/dist/jquery.min.js"></script>

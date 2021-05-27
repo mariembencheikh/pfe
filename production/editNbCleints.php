@@ -26,14 +26,14 @@ if (isset($_POST["submit"])) {
 
     if (empty($tab_existe)) {
         $intervalles[$id] = array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2);
-        $sal=$collection_salaire->findOne(array('department'=>$dep,'interval'=>$int));
-        $nbPersonnel = $collection_nbPersonnel->findOne(array('department' => $dep,'interval'=>$int));
+        $sal = $collection_salaire->findOne(array('department' => $dep, 'interval' => $int));
+        $nbPersonnel = $collection_nbPersonnel->findOne(array('department' => $dep, 'interval' => $int));
         $newdata = array('$set' => array("interval" => $intervalles));
 
         if ($n1 < $n2) {
             $collection_Department->update(array('nameDep' => $nb_edit['nameDep']), $newdata);
-            $collection_salaire->update(array('department'=>$dep),array('$set'=>array('interval'=>$intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
-            $collection_nbPersonnel->update(array('department'=>$dep),array('$set'=>array('interval'=>$intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
+            $collection_salaire->update(array('department' => $dep), array('$set' => array('interval' => $intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
+            $collection_nbPersonnel->update(array('department' => $dep), array('$set' => array('interval' => $intervalles[$id]['n1'] . " - " . $intervalles[$id]['n2'])));
             header("Location:interval.php?id=$dep");
         } elseif ($n1 >= $n2) {
             echo "<script>alert(\" Invalid interval\")</script>";
@@ -41,17 +41,6 @@ if (isset($_POST["submit"])) {
     } else {
         echo "<script>alert(\"existe\")</script>";
     }
-
-//    $intervalles[$id] = array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2);
-//
-//    $newdata = array('$set' => array("interval" => $intervalles));
-//
-//    if ($n1 < $n2) {
-//        $collection_Department->update(array('nameDep' => $nb_edit['nameDep']), $newdata);
-//        header("Location:interval.php?id=$dep");
-//    } elseif ($n1 >= $n2) {
-//        echo "<script>alert(\" Invalid interval\")</script>";
-//    }
 
 
 }

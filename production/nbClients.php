@@ -1,3 +1,10 @@
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+
+</script>
 <?php
 include("config.php");
 session_start();
@@ -13,7 +20,7 @@ if (isset($_POST["ok"])) {
         $intervalles = $dep_edit['interval'];
         $tab_existe = array();
         for ($i = 0; $i < count($intervalles); $i++) {
-            if (($intervalles[$i]['ordre'] == $ordre) && ($intervalles[$i]['n1'] == $n1) && ($intervalles[$i]['n2'] == $n2)) {
+            if ((($intervalles[$i]['ordre'] == $ordre) && ($intervalles[$i]['n1'] == $n1) && ($intervalles[$i]['n2'] == $n2))||($intervalles[$i]['n1'] == $n1) && ($intervalles[$i]['n2'] == $n2)) {
                 array_push($tab_existe, array('ordre' => $ordre, 'n1' => $n1, 'n2' => $n2));
             }
 
@@ -26,37 +33,12 @@ if (isset($_POST["ok"])) {
             if ($n1 < $n2) {
                 $collection_Department->update(array('nameDep' => $dep_edit['nameDep']), $newdata);
             } elseif ($n1 >= $n2) {
-                echo "<script>alert(\" Invalid interval\")</script>";
+                echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Intervalle invalide",icon: "error",confirmButtonText: "OK"})});</script>';
             }
         } else {
-            echo "<script>alert(\"existe\")</script>";
-//            ?>
-<!---->
-<!--<script>$(function() {-->
-<!--        $('#myModal').modal('show');-->
-<!--    });-->
-<!--</script>-->
-<!--            <div id="myModal" class="modal fade" role="dialog">-->
-<!--                <div class="modal-dialog">-->
-<!---->
-<!--                    <!-- Modal content-->-->
-<!--                    <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                            <button type="button" class="close" data-dismiss="modal">&times;</button>-->
-<!--                            <h4 class="modal-title">Modal Header</h4>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <p>Some text in the modal.</p>-->
-<!--                        </div>-->
-<!--                        <div class="modal-footer">-->
-<!--                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!---->
-<!--                </div>-->
-<!--            </div>-->
-<!---->
-<!--            --><?php
+            echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Intervalle existe",icon: "error",confirmButtonText: "OK"})});</script>';
+
+
         }
 
 
@@ -97,12 +79,13 @@ if (isset($_GET['id'])) {
     <!-- Switchery -->
     <link href="../vendors/switchery/dist/switchery.min.css" rel="stylesheet">
     <!-- starrr -->
-    <link href="../vendors/starrr/dist/starrr. css" rel="stylesheet">
+    <link href="../vendors/starrr/dist/starrr.css" rel="stylesheet">
     <!-- bootstrap-daterangepicker -->
     <link href="../vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
+
 </head>
 
 <body class="nav-md">
@@ -194,9 +177,10 @@ if (isset($_GET['id'])) {
                                                             <td><?php echo $cursor['interval'][$i]['ordre']; ?></td>
                                                             <td><?php echo $cursor['interval'][$i]['n1'] . " - " . $cursor['interval'][$i]['n2']; ?></td>
                                                             <td class="last"><a
-                                                                        href="editNbCleints.php?id=<?php echo $i; ?>&dep=<?php echo $cursor['nameDep']; ?>">Modifier</a></a>&nbsp;&nbsp;<a
+                                                                        href="editNbCleints.php?id=<?php echo $i; ?>&dep=<?php echo $cursor['nameDep']; ?>"><i
+                                                                            class="fa fa-edit"></i></a></a>&nbsp;&nbsp;<a
                                                                         href="deleteInterval.php?id=<?php echo $i; ?>&dep=<?php echo $cursor['nameDep']; ?>"
-                                                                        onclick="return sure();">Supprimer</a>
+                                                                        onclick="return sure();"><i class="fa fa-trash"></i></a>
                                                             </td>
                                                         </tr>
                                                         <?php
@@ -213,7 +197,7 @@ if (isset($_GET['id'])) {
                                 <div class="item form-group">
                                     <div class="col-md-6 col-sm-6 offset-md-4">
                                         <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
-                                               onclick="window.location='departments.php';"/>
+                                               onclick="window.location='interval.php?id=<?php echo $dep=$_GET['id'];?>'"/>
                                     </div>
                                 </div>
 
@@ -239,7 +223,6 @@ if (isset($_GET['id'])) {
     function sure() {
         return (confirm('Etes-vous sûr de vouloir supprimer ce département ?'));
     }
-
 
 
 </script>
@@ -281,7 +264,7 @@ if (isset($_GET['id'])) {
 <!-- Custom Theme Scripts -->
 <script src="../build/js/custom.min.js"></script>
 
+
+
 </body>
 </html>
-
-

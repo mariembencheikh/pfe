@@ -1,17 +1,23 @@
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+
+</script>
 <?php
 include("config.php");
 session_start();
 $name = $_POST['nameDep'];
-$number = $_POST['nbEmp'];
 $table = array();
 if (isset($_POST["submit"])) {
 
     $cursor = $collection_Department->findOne(array('nameDep' => $name));
     if (empty($cursor)) {
-        $collection_Department->insert(array('nameDep' => $name, 'number' => $number, 'interval' => $table, 'createdBy' => $_SESSION['email'], 'time' => new DateTime()));
+        $collection_Department->insert(array('nameDep' => $name, 'interval' => $table, 'createdBy' => $_SESSION['email'], 'time' => new DateTime()));
         header("Location:departments.php");
     } else {
-        $_SESSION['errMsg'] = "Département existe";
+        echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Département existe",icon: "error",confirmButtonText: "OK"})});</script>';
     }
 }
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
@@ -97,13 +103,13 @@ $_SESSION["nameDep"] = $name;
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="ajoutDepartment.php"
                                       method="POST">
-                                    <div id="errMsg">
-                                        <p style="color: red;"><b><?php if (!empty($_SESSION['errMsg'])) {
-                                                    echo $_SESSION['errMsg'];
-                                                } ?></b><br/></p>
-                                    </div>
-                                    <br>
-                                    <?php unset($_SESSION['errMsg']); ?>
+<!--                                    <div id="errMsg">-->
+<!--                                        <p style="color: red;"><b>--><?php //if (!empty($_SESSION['errMsg'])) {
+//                                                    echo $_SESSION['errMsg'];
+//                                                } ?><!--</b><br/></p>-->
+<!--                                    </div>-->
+<!--                                    <br>-->
+<!--                                    --><?php //unset($_SESSION['errMsg']); ?>
                                     <div class="item form-group">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom
                                             departement <span class="required">*</span>
@@ -113,15 +119,7 @@ $_SESSION["nameDep"] = $name;
                                                    name="nameDep">
                                         </div>
                                     </div>
-                                    <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Nombre
-                                            des postes <span class="required">*</span>
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 ">
-                                            <input type="number" id="number" name="nbEmp" required="required"
-                                                   class="form-control">
-                                        </div>
-                                    </div>
+
 
                                     <div class="ln_solid"></div>
                                     <div class="item form-group">

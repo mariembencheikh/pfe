@@ -1,3 +1,8 @@
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
 <?php
 include("config.php");
 session_start();
@@ -11,12 +16,13 @@ if (isset($_POST["submit"])) {
     $fetch=$collection->findOne(array("email" => $email));
     if(empty($fetch)){
         $collection->insert(array("name" => $name, "email" => $email,"telephone"=>$tel,'password'=>$pwd,'role'=>$role,"etat"=>"0"));
+
         header("Location:listeUser.php");
     }
     else{
-        $_SESSION['errMsg'] ="Email existe";
+        echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Email existe",icon: "error",confirmButtonText: "OK"})});</script>';
+
     }
-//    header("Location:listeUser.php");
 }
 
 ?>
@@ -94,11 +100,11 @@ if (isset($_POST["submit"])) {
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="ajoutUser.php" method="POST">
-                                    <div id="errMsg">
-                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
-                                    </div>
-                                    <br>
-                                    <?php unset($_SESSION['errMsg']); ?>
+<!--                                    <div id="errMsg">-->
+<!--                                        <p style="color: red;"><b>--><?php //if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?><!--</b><br/></p>-->
+<!--                                    </div>-->
+<!--                                    <br>-->
+<!--                                    --><?php //unset($_SESSION['errMsg']); ?>
                                     <div class="item form-group">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span
                                                 class="required">*</span>

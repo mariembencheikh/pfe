@@ -9,8 +9,9 @@ if (isset($_GET['id'])) {
 
         return $a['ordre'] - $b['ordre'];
     });
-    $collection_Department->update(array('nameDep'=>$dep_intervalle['nameDep']),array('$set'=>array('interval'=>$dep_intervalle['interval'])));
+    $collection_Department->update(array('nameDep' => $dep_intervalle['nameDep']), array('$set' => array('interval' => $dep_intervalle['interval'])));
 
+    $dep=$_GET['id'];
 
 } else {
     header("Location:departments.php");
@@ -108,12 +109,14 @@ if (isset($_GET['id'])) {
                                                 for ($i = 0; $i < count($dep_intervalle['interval']); $i++) {
                                                     ?>
                                                     <tr class="odd pointer">
-                                                        <td><?php echo  $dep_intervalle['interval'][$i]['ordre'] ?></td>
+                                                        <td><?php echo $dep_intervalle['interval'][$i]['ordre'] ?></td>
                                                         <td><?php echo $dep_intervalle['interval'][$i]['n1'] . " - " . $dep_intervalle['interval'][$i]['n2'] ?></td>
-                                                        <td class="last"><a
-                                                                    href="editNbCleints.php?id=<?php echo $i;?>&dep=<?php echo $dep_intervalle['nameDep'];?>">Modifier</a></a>&nbsp;&nbsp;<a
-                                                                    href="deleteInterval.php?id=<?php echo $i;?>&dep=<?php echo $dep_intervalle['nameDep'];?>"
-                                                                    onclick="return sure();">Supprimer</a>
+                                                        <td class="last">
+                                                            <a
+                                                                    href="editNbCleints.php?id=<?php echo $i; ?>&dep=<?php echo $dep_intervalle['nameDep']; ?>"><i
+                                                                        class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                                            <a href="deleteInterval.php?id=<?php echo $i; ?>&dep=<?php echo $dep_intervalle['nameDep']; ?>"
+                                                               onclick="return sure();"><i class="fa fa-trash"></i></a>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -126,12 +129,14 @@ if (isset($_GET['id'])) {
                                     </div>
                                 </div>
                                 <div class="ln_solid"></div>
-                                                                <div class="item form-group">
-                                                                    <div class="col-md-6 col-sm-6 offset-md-4">
-                                                                        <input class="btn btn-primary" name="cancel" type="button" value="Retour"
-                                                                               onclick="window.location='departments.php';"/>
-                                                                    </div>
-                                                                </div>
+                                <div class="item form-group">
+                                    <div class="col-md-6 col-sm-6 offset-md-3">
+                                        <input class="btn btn-success" name="submit" type="submit"
+                                               value="Ajouter nouveau" onclick="window.location='nbClients.php?id=<?php echo $dep;?>'"/>
+                                        <input class="btn btn-primary" name="cancel" type="button" value="Retour"
+                                               onclick="window.location='departments.php';"/>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>

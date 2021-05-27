@@ -74,9 +74,12 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="card-box table-responsive">
+
                                             <table id="datatable" class="table table-striped table-bordered"
                                                    style="width:100%">
+
                                                 <thead>
+
                                                 <tr>
                                                     <th>Note RBE</th>
                                                     <th>Cout</th>
@@ -93,8 +96,8 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                 $cursor = $collection_coutFixe->find();
                                                 foreach ($cursor as $c) {?>
                                                     <tr>
-                                                        <td>Salaire brut fixe employés </td>
-                                                        <td><?php echo number_format($c['salEmp'], 3, ',', ',');?></td>
+                                                        <td>TFP & FOPROLOS</td>
+                                                        <td><?php echo $c['foprolos'];?>&nbsp;%</td>
                                                         <?php if($UserConnect['role']==1){?>
                                                             <td><?php echo $c['createdBy'];?></td>
                                                             <td><?php echo $c['time']['date'];?></td>
@@ -102,39 +105,21 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                             <td><?php echo $c['editTime']['date'];?></td>
                                                         <?php }?>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Salaire administrateur Salarié</td>
-                                                        <td><?php echo number_format($c['salAdmin'], 3, ',', ',');?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Salaire administrateur Régime Indépendant</td>
-                                                        <td><?php echo number_format($c['salAdminIn'], 3, ',', ',');?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>TFP & FOPROLOS</td>
-                                                        <td><?php echo number_format($c['foprolos'], 3, ',', ',');?></td>
-                                                    </tr>
+
                                                     <tr>
                                                         <td>Charge sociale patronale</td>
-                                                        <td><?php echo number_format($c['chargePat'], 3, ',', ',');?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Charge sociale Administrateur</td>
-                                                        <td><?php echo number_format($c['chargeAdmin'], 3, ',', ',');?></td>
+                                                        <td><?php echo $c['chargePat'];?>&nbsp;%</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Provision Prime</td>
-                                                        <td><?php echo number_format($c['prime'], 3, ',', ',');?></td>
+                                                        <td><?php echo $c['prime'];?>&nbsp;%</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Provision congé</td>
-                                                        <td><?php echo number_format($c['conge'], 3, ',', ',');?></td>
+                                                        <td><?php echo $c['conge'];?>&nbsp;%</td>
                                                     </tr>
 
 
-
-                                                    <input type="submit" class="btn btn-success" name="edit"
-                                                           value="Modifier" onclick="window.location='editCoutFixe.php?id=<?php echo $c['_id'];?>'">
 
                                                     <?php
 

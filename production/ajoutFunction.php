@@ -1,3 +1,8 @@
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
 <?php
 include("config.php");
 session_start();
@@ -13,7 +18,8 @@ if (isset($_POST["submit"])) {
         $collection_Employees->insert(array('department'=>$select,'function' => $function, 'salary' => doubleval($salary),'createdBy'=>$_SESSION['email'],'time'=>new DateTime()));
         header("Location:listeFonctions.php");
     } else {
-        $_SESSION['errMsg'] = "Fonction existe";
+        echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Fonction existe",icon: "error",confirmButtonText: "OK"})});</script>';
+
     }
 }
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
@@ -22,6 +28,7 @@ if($UserConnect['etat']== 0 ){
 }
 $_SESSION["function"] = $function;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,11 +104,11 @@ $_SESSION["function"] = $function;
                             <div class="x_content">
                                 <br/>
                                 <form class="form-horizontal form-label-left" action="ajoutFunction.php"  method="POST">
-                                    <div id="errMsg">
-                                        <p style="color: red;"><b><?php if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?></b><br/></p>
-                                    </div>
-                                    <br>
-                                    <?php unset($_SESSION['errMsg']); ?>
+<!--                                    <div id="errMsg">-->
+<!--                                        <p style="color: red;"><b>--><?php //if(!empty($_SESSION['errMsg'])) { echo $_SESSION['errMsg']; } ?><!--</b><br/></p>-->
+<!--                                    </div>-->
+<!--                                    <br>-->
+<!--                                    --><?php //unset($_SESSION['errMsg']); ?>
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align">Departement<span class="required">*</span></label>
                                         <div class="col-md-6 col-sm-6 ">
@@ -130,7 +137,7 @@ $_SESSION["function"] = $function;
                                         </label>
                                         <div class="col-md-6 col-sm-6 ">
                                             <input type="number" id="number" step="any" name="salary"
-                                                   class="form-control">
+                                                   class="form-control" min="0">
                                         </div>
                                     </div>
 

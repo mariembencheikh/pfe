@@ -2,18 +2,14 @@
 include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
-    $salBrut=$_POST['salEmp'];
-    $salAdmin=$_POST['salAdmin'];
-    $salAminIn=$_POST['salAdminIn'];
     $foprolos = $_POST['foprolos'];
     $chargePat = $_POST['chargePat'];
-    $chargeAdmin=$_POST['chargePatAdmin'];
-    $prime=$_POST['prime'];
-    $conge=$_POST['conge'];
-    $cursor_cost = $collection_coutFixe->findOne(array('salEmp'=>$salBrut,'salAdmin'=>$salAdmin,'salAdminIn'=>$salAminIn,'foprolos'=>$foprolos,'chargePat' => $chargePat,'chargeAdmin'=>$chargeAdmin,'prime'=>$prime,'conge'=>$conge));
+    $prime = $_POST['prime'];
+    $conge = $_POST['conge'];
+    $cursor_cost = $collection_coutFixe->findOne(array('foprolos' => $foprolos, 'chargePat' => $chargePat, 'prime' => $prime, 'conge' => $conge));
     if (empty($cursor_cost)) {
-        $collection_coutFixe->insert(array('salEmp'=>$salBrut,'salAdmin'=>$salAdmin,'salAdminIn'=>$salAminIn,'foprolos'=>$foprolos,'chargePat' => $chargePat,'chargeAdmin'=>$chargeAdmin,'prime'=>$prime,'conge'=>$conge, 'createdBy' => $_SESSION['email'], 'time' => new DateTime()));
-        header('Location:VoirCoutFixe.php');
+        $collection_coutFixe->insert(array('foprolos' => $foprolos, 'chargePat' => $chargePat,'prime' => $prime, 'conge' => $conge, 'createdBy' => $_SESSION['email'], 'time' => new DateTime()));
+        header('Location:VoircoutsFixes.php');
     } else {
         echo "<script>alert(\"déjà existe\")</script>";
     }
@@ -83,12 +79,12 @@ if (isset($_POST["submit"])) {
                     </div>
                     <div class="title_right">
                         <div class="col-md-5 col-sm-5  form-group pull-right top_search">
-<!--                            <div class="input-group">-->
-<!--                                <input type="text" class="form-control" placeholder="Search for...">-->
-<!--                                <span class="input-group-btn">-->
-<!--										<button class="btn btn-default" type="button">Go!</button>-->
-<!--									</span>-->
-<!--                            </div>-->
+                            <!--                            <div class="input-group">-->
+                            <!--                                <input type="text" class="form-control" placeholder="Search for...">-->
+                            <!--                                <span class="input-group-btn">-->
+                            <!--										<button class="btn btn-default" type="button">Go!</button>-->
+                            <!--									</span>-->
+                            <!--                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -101,39 +97,15 @@ if (isset($_POST["submit"])) {
                             </div>
                             <div class="x_content">
                                 <br/>
-                                <form class="form-horizontal form-label-left" action="AjoutcoutsFixes.php" method="POST">
+                                <form class="form-horizontal form-label-left" action="AjoutcoutsFixes.php"
+                                      method="POST">
                                     <div class="form-group row">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Salaire brut fixe employé<span class="required">*</span></label>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align">TFP & Foprolos<span
+                                                    class="required">*</span></label>
                                         <div class="col-md-2 col-sm-2 ">
                                             <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="salEmp" required="required" aria-label="">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Salaire administrateur salarié<span class="required">*</span></label>
-                                        <div class="col-md-2 col-sm-2 ">
-                                            <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="salAdmin" required="required" aria-label="">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Salaire administrateur Régime Indépendant<span class="required">*</span></label>
-                                        <div class="col-md-2 col-sm-2 ">
-                                            <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="salAdminIn" required="required" aria-label="">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align">TFP & Foprolos<span class="required">*</span></label>
-                                        <div class="col-md-2 col-sm-2 ">
-                                            <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="foprolos" required="required" aria-label="">
+                                                <input type="number" step="any" class="form-control" name="foprolos"
+                                                       required="required" aria-label="">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">%</span>
                                                 </div>
@@ -146,7 +118,8 @@ if (isset($_POST["submit"])) {
                                         </label>
                                         <div class="col-md-2 col-sm-2 ">
                                             <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="chargePat" required="required" aria-label="">
+                                                <input type="number" step="any" class="form-control" name="chargePat"
+                                                       required="required" aria-label="">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">%</span>
                                                 </div>
@@ -154,39 +127,33 @@ if (isset($_POST["submit"])) {
                                         </div>
                                     </div>
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align"
-                                               for="name">Charge sociale administrateur<span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Provision
+                                            prime<span class="required">*</span>
                                         </label>
                                         <div class="col-md-2 col-sm-2 ">
                                             <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="chargePatAdmin" required="required" aria-label="">
+                                                <input type="number" step="any" class="form-control" name="prime"
+                                                       required="required" aria-label="">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">%</span>
                                                 </div>
+
                                             </div>
+
                                         </div>
                                     </div>
+
                                     <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Provision prime<span class="required">*</span>
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Provision
+                                            conge<span class="required">*</span>
                                         </label>
                                         <div class="col-md-2 col-sm-2 ">
                                             <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="prime" required="required" aria-label="">
-<!--                                                <div class="input-group-append">-->
-<!--                                                    <span class="input-group-text">/6*0.85</span>-->
-<!--                                                </div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="item form-group">
-                                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="number">Provision conge<span class="required">*</span>
-                                        </label>
-                                        <div class="col-md-2 col-sm-2 ">
-                                            <div class="input-group mb-3">
-                                                <input type="number" step="any" class="form-control" name="conge" required="required" aria-label="">
-<!--                                                <div class="input-group-append">-->
-<!--                                                    <span class="input-group-text">/ 26*2</span>-->
-<!--                                                </div>-->
+                                                <input type="number" step="any" class="form-control" name="conge"
+                                                       required="required" aria-label="">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -197,7 +164,8 @@ if (isset($_POST["submit"])) {
                                     <div class="item form-group">
                                         <div class="col-md-6 col-sm-6 offset-md-3">
                                             <input class="btn btn-success" name="submit" type="submit" value="Ajouter"/>
-                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler" onclick="window.location=''"/>
+                                            <input class="btn btn-primary" name="cancel" type="button" value="Annuler"
+                                                   onclick="window.location=''"/>
                                         </div>
                                     </div>
 

@@ -3,7 +3,10 @@ include("config.php");
 session_start();
 $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
 $cursor = $collection_coutFixe->find();
-
+$coutFixes = $collection_coutFixe->find();
+foreach ($coutFixes as $cout){
+    $id=$cout['_id'];
+}
 if (empty($UserConnect)) {
     header("Location:login.php");
 }
@@ -75,13 +78,15 @@ if (empty($UserConnect)) {
                     </li>
                     <li><a>Les couts fixes<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li class="sub_menu"><a href="VoircoutsFixes.php">Voir</a></li>
-                            <li>
-                                <a href="AjoutcoutsFixes.php" <?php if ($UserConnect['etat'] == 0) { ?> onclick="return false;" style="cursor: default;"<?php } ?>>Ajouter</a>
+                            <li class="sub_menu"><a href="VoircoutsFixes.php">Consulter</a></li>
+
+                            <li class="sub_menu">
+                                <a href="editCoutFixe.php?id=<?php echo $id;?>"
+                                    <?php if ($UserConnect['etat'] == 0) { ?> onclick="return false;" style="cursor: default;"
+                                    <?php } ?>>Modifier</a>
                             </li>
                         </ul>
                     </li>
-
 
 
                     </li>
@@ -115,6 +120,13 @@ if (empty($UserConnect)) {
 
                     </li>
 
+
+                </ul>
+            </li>
+            <li><a><i class="fa fa-calculator"></i> Simulateur <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+
+                    <li><a href="simulateur.php">Table simulation</a></li>
 
                 </ul>
             </li>

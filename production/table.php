@@ -49,9 +49,9 @@ if (isset($_POST["ok"])) {
             $saison2 = 0;
             $saison3 = 0;
             foreach ($cursor as $cs) {
-                $saison1 += $cs['salary'] * $filtre_interval[$k][$cs['function']]['haute'];
-                $saison2 += $cs['salary'] * $filtre_interval[$k][$cs['function']]['moyenne'];
-                $saison3 += $cs['salary'] * $filtre_interval[$k][$cs['function']]['basse'];
+                $saison1 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['haute'];
+                $saison2 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['moyenne'];
+                $saison3 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['basse'];
 
                 $d['salaireTotale'] = array('haute' => $saison1, 'moyenne' => $saison2, 'basse' => $saison3);
                 $j++;
@@ -82,7 +82,7 @@ if (isset($_POST["ok"])) {
             $newData = array('$set' => $test);
             $a = array();
             array_push($a, $test);
-            $collection_nbPersonnel->update(array('department' => $dep, 'interval' => $cursorDep['interval'][$i]['n1'] . ' - ' . $cursorDep['interval'][$i]['n2']), $newData,array('upsert'=>true));
+            $collection_nbPersonnel->update(array('department' => $dep, 'interval' => $cursorDep['interval'][$i]['n1'] . ' - ' . $cursorDep['interval'][$i]['n2']), $newData, array('upsert' => true));
 
             $k = 0;
             $d = array();
@@ -92,15 +92,15 @@ if (isset($_POST["ok"])) {
             $saison2 = 0;
             $saison3 = 0;
             foreach ($cursor as $cs) {
-                $saison1 += $cs['salary'] * $a[$k][$cs['function']]['haute'];
-                $saison2 += $cs['salary'] * $a[$k][$cs['function']]['moyenne'];
-                $saison3 += $cs['salary'] * $a[$k][$cs['function']]['basse'];
+                $saison1 += ($cs['salary']/26) * $a[$k][$cs['function']]['haute'];
+                $saison2 += ($cs['salary']/26) * $a[$k][$cs['function']]['moyenne'];
+                $saison3 += ($cs['salary']/26) * $a[$k][$cs['function']]['basse'];
 
                 $d['salaireTotale'] = array('haute' => $saison1, 'moyenne' => $saison2, 'basse' => $saison3);
                 $j++;
             }
             $nData = array('$set' => $d);
-            $collection_salaire->update(array('department' => $dep, 'interval' => $cursorDep['interval'][$i]['n1'] . ' - ' . $cursorDep['interval'][$i]['n2']), $nData,array('upsert'=>true));
+            $collection_salaire->update(array('department' => $dep, 'interval' => $cursorDep['interval'][$i]['n1'] . ' - ' . $cursorDep['interval'][$i]['n2']), $nData, array('upsert' => true));
             $k++;
 
 
@@ -128,7 +128,10 @@ if (isset($_POST["ok"])) {
 
     <title>DataTables | Gentelella</title>
     <script src="../vendors/jquery/dist/jquery.min.js"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
     <!-- Bootstrap -->
     <link href="cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -171,7 +174,7 @@ if (isset($_POST["ok"])) {
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Nombre des personnels par departement</h3>
+                        <h3>Nombre des personnels par département</h3>
                     </div>
                     <div class="title_right">
                         <div class="col-md-5 col-sm-5  form-group pull-right top_search">
@@ -223,12 +226,12 @@ if (isset($_POST["ok"])) {
                                                             return $a['ordre'] - $b['ordre'];
                                                         });
                                                         if (count($cursor['interval']) == 0) {
-                                                            echo "<script>alert(\"Ajouter intervalles occupation pour ce department d'abord\")</script>";
+                                                            echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Ajouter intervalles occupation pour ce department d\'abord",icon: "error",confirmButtonText: "OK"})});</script>';
                                                         } else {
 
 
                                                             $cursorFunction = $collection_Employees->find(array('department' => $select));
-
+                                                            
 
                                                             $nb = $collection_nbPersonnel->count(array('department' => $select));
                                                             $saison = $collection_saison->find();
@@ -312,7 +315,8 @@ if (isset($_POST["ok"])) {
                                                                                                        class="form-control"
                                                                                                        name="<?php echo $s['typeS'] . $i . $j; ?>"
                                                                                                        required="required"
-                                                                                                       style="width: 80px;"
+                                                                                                       style="width: 80px;text-align: right"
+                                                                                                       min="0"
                                                                                                 >
                                                                                             </td>
                                                                                         </tr>
@@ -325,9 +329,6 @@ if (isset($_POST["ok"])) {
                                                                         ?>
                                                                     </tr>
                                                                     <?php
-//                                                                $i++;
-
-
                                                                 }
                                                                 ?>
 
@@ -343,31 +344,6 @@ if (isset($_POST["ok"])) {
                                                                 foreach ($nbPersonnel as $item) {
                                                                     array_push($a, $item);
                                                                 }
-//                                                                for ($i = 0; $i < count($cursor['interval']); $i++) {
-//
-//                                                                    foreach ($nbPersonnel as $n) {
-//                                                                        $intExsite = $cursor['interval'][$i]['n1'] . " - " . $cursor['interval'][$i]['n2'];
-//
-//
-//                                                                        if ($intExsite != $n['interval']) {
-//
-//                                                                            $test = array("department" => $select);
-//                                                                            $j = 0;
-//
-//                                                                            $test["interval"] = $intExsite;
-//
-//                                                                            foreach ($cursorFunction as $item) {
-//                                                                                $test[$item['function']] = array('basse' => 0, 'moyenne' => 0, 'haute' => 0);
-//                                                                                $j++;
-//                                                                            }
-//
-//
-//                                                                        }
-//                                                                    }
-//
-//                                                                }
-//
-//                                                                $collection_nbPersonnel->insert($test);
 
 
                                                                 ?>
@@ -407,11 +383,9 @@ if (isset($_POST["ok"])) {
                                                                 <tbody>
 
                                                                 <?php
-                                                                //                                                            $i = 0;
                                                                 for ($i = 0; $i < count($cursor['interval']); $i++) {
 
 
-                                                                    //                                                            foreach ($cursorNbclients as $c) {
                                                                     $saison1 = 0;
                                                                     $saison2 = 0;
                                                                     $saison3 = 0;
@@ -477,9 +451,9 @@ if (isset($_POST["ok"])) {
 
                                                                         <?php
                                                                         foreach ($cursorFunction as $cs) {
-                                                                            $saison1 += $cs['salary'] * $filtre_interval[$i][$cs['function']]['haute'];
-                                                                            $saison2 += $cs['salary'] * $filtre_interval[$i][$cs['function']]['moyenne'];
-                                                                            $saison3 += $cs['salary'] * $filtre_interval[$i][$cs['function']]['basse'];
+                                                                            $saison1 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['haute'];
+                                                                            $saison2 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['moyenne'];
+                                                                            $saison3 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['basse'];
 
 
                                                                             ?>
@@ -494,14 +468,15 @@ if (isset($_POST["ok"])) {
                                                                                                        name="<?php echo $s['typeS'] . $i . $j; ?>"
                                                                                                        value="<?php echo $filtre_interval[$i][$cs['function']][$s['typeS']]; ?>"
                                                                                                        required
-                                                                                                       style="height:35px;width: 75px;">
+                                                                                                       style="height:35px;width: 75px;text-align: right"
+                                                                                                       min="0">
                                                                                             </td>
-                                                                                            <td>
+                                                                                            <td style="text-align: right;">
                                                                                                 <input
                                                                                                         value="<?php
-                                                                                                        echo number_format($cs['salary'] * $filtre_interval[$i][$cs['function']][$s['typeS']], 3, ',', ',');
+                                                                                                        echo number_format(($cs['salary']/26) * $filtre_interval[$i][$cs['function']][$s['typeS']], 3, '.', '');
                                                                                                         ?>" disabled
-                                                                                                        style="height: 35px;width: 75px"
+                                                                                                        style="height: 35px;width: 75px; text-align: right"
                                                                                                 >
                                                                                             </td>
                                                                                         </tr>
@@ -523,11 +498,11 @@ if (isset($_POST["ok"])) {
                                                                                             if ($s['typeS'] == 'haute') {
                                                                                                 $totalSal += $saison1;
                                                                                                 ?>
-                                                                                                <input style="height: 35px;width: 75px"
-                                                                                                       ;
+                                                                                                <input style="height: 35px;width: 75px;text-align: right;"
+
                                                                                                        name="salSaison1"
 
-                                                                                                       value="<?php echo number_format($saison1, 3, ',', ',');
+                                                                                                       value="<?php echo number_format($saison1, 3, '.', '');
                                                                                                        ?>"
                                                                                                        disabled="disabled">
 
@@ -540,11 +515,10 @@ if (isset($_POST["ok"])) {
 
 
                                                                                                 <input
-                                                                                                        style="height: 35px;width: 75px"
-                                                                                                        ;
+                                                                                                        style="height: 35px;width: 75px;text-align: right;"
                                                                                                         name="salSaison2"
 
-                                                                                                        value="<?php echo number_format($saison2, 3, ',', ',');
+                                                                                                        value="<?php echo number_format($saison2, 3, '.', '');
                                                                                                         ?>"
                                                                                                         disabled="disabled">
 
@@ -552,10 +526,10 @@ if (isset($_POST["ok"])) {
                                                                                             if ($s['typeS'] == 'basse') {
                                                                                                 $totalSal += $saison3; ?>
                                                                                                 <input
-                                                                                                        style="height: 35px;width: 75px"
+                                                                                                        style="height: 35px;width: 75px;text-align: right;"
                                                                                                         ;
                                                                                                         name="salSaison2"
-                                                                                                        value="<?php echo number_format($saison3, 3, ',', ',');
+                                                                                                        value="<?php echo number_format($saison3, 3, '.', '');
                                                                                                         ?>" disabled>
 
 
@@ -572,10 +546,10 @@ if (isset($_POST["ok"])) {
 
                                                                             <input
                                                                                     value="<?php
-                                                                                    echo number_format($totalSal, 3, ',', ',');
+                                                                                    echo number_format($totalSal, 3, '.', '');
 
                                                                                     ?>" disabled
-                                                                                    style="height: 35px;width: 75px" ;
+                                                                                    style="height: 35px;width: 75px;text-align: right;"
                                                                             >
 
 
@@ -653,17 +627,3 @@ if (isset($_POST["ok"])) {
 </html>
 
 
-<!--//            foreach ($saison as $s){-->
-<!--//                if ($s['typeS'] == 'haute') {-->
-<!--//                    $totalSal += $saison1;-->
-<!--//-->
-<!--//                }-->
-<!--//                if ($s['typeS'] == 'moyenne') {-->
-<!--//                    $totalSal += $saison2;-->
-<!--//-->
-<!--//                }-->
-<!--//                if ($s['typeS'] == 'basse') {-->
-<!--//                    $totalSal += $saison3;-->
-<!--//-->
-<!--//                }-->
-<!--//            }-->

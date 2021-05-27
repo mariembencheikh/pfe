@@ -66,7 +66,7 @@ foreach ($salaire as $item) {
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Cout salariale</h3>
+                        <h3>Charge Variable</h3>
                     </div>
                     <div class="title_right">
                         <div class="col-md-5 col-sm-5  form-group pull-right top_search">
@@ -97,74 +97,50 @@ foreach ($salaire as $item) {
                                                     <thead class="headings">
                                                     <tr>
                                                         <th style="text-align: center;">Département</th>
-                                                        <th style="text-align: center;">Type saison</th>
+                                                        <th style="text-align: center">Type saison</th>
                                                         <?php for ($j = 0; $j < count($dep['interval']); $j++) { ?>
-                                                            <th style="text-align: center; vertical-align: middle;">
+                                                            <th style="text-align: center">
                                                                 <?php echo $dep['interval'][$j]['n1']; ?>
                                                                 -
                                                                 <?php echo $dep['interval'][$j]['n2']; ?>
                                                             </th>
                                                         <?php } ?>
-                                                        <th style="text-align: center;">Totale par saison</th>
-                                                        <th style="text-align: center;">Totale</th>
+                                                        <th style="text-align: center">Totale par saison</th>
+                                                        <th style="text-align: center">Totale</th>
+
 
                                                     </tr>
                                                     </thead>
 
 
                                                     <tbody>
-                                                    <?php
 
-
-                                                    $Total = 0;
-                                                    $TotSaison1 = 0;
-                                                    $TotSaison2 = 0;
-                                                    $TotSaison3 = 0;
-                                                    ?>
 
 
                                                     <tr>
                                                         <td style="text-align: center; vertical-align: middle;"> <?php echo $dep['nameDep']; ?></td>
                                                         <td>
-                                                            <table style=" margin-left: auto; margin-right: auto;">
-                                                                <?php foreach ($saison as $s) { ?>
-                                                                    <tr>
-                                                                        <?php if ($s['typeS'] == 'haute') { ?>
-                                                                            <td>
+                                                            <?php
+                                                            foreach ($saison as $s) {
 
-                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Haute</label>
-                                                                            </td>
+                                                                ?>
 
-                                                                            <?php
-                                                                        }
-                                                                        if ($s['typeS'] == 'moyenne') {
-                                                                            ?>
-                                                                            <td>
-                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Moyenne</label>
-                                                                            </td>
 
-                                                                            <?php
-                                                                        }
-                                                                        if ($s['typeS'] == 'basse') {
-                                                                            ?>
-                                                                            <td>
-                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Basse</label>
-                                                                            </td>
+                                                                <div class="form-group row " style="text-align: center">
+                                                                    <label style="text-transform: capitalize;"
+                                                                           class="control-label col-md-12 col-sm-3 "><?php echo $s['typeS']; ?></label>
+                                                                </div>
 
-                                                                        <?php } ?>
-                                                                    </tr>
-
-                                                                    <?php
-
-                                                                } ?>
-
-                                                            </table>
+                                                            <?php } ?>
                                                         </td>
                                                         <?php
                                                         $depp = $dep['nameDep'];
                                                         $int1 = $dep['interval'][0]['n1'] . " - " . $dep['interval'][0]['n2'];
-                                                        $s_dep_int=$collection_salaire->findOne(array("department" => $depp,"interval" => $int1));
-
+                                                        $s_dep_int = $collection_salaire->findOne(array("department" => $depp, "interval" => $int1));
+                                                        $Total = 0;
+                                                        $TotSaison1 = 0;
+                                                        $TotSaison2 = 0;
+                                                        $TotSaison3 = 0;
                                                         for ($j = 0; $j < count($dep['interval']); $j++) {
 
 
@@ -174,17 +150,17 @@ foreach ($salaire as $item) {
                                                             $filtre_interval = array_filter($a, function ($p) use ($interval, $depp) {
                                                                 return (($p["interval"] == $interval) && $p['department'] == $depp);
                                                             });
-                                                            while ($i < count($a)) {
-
-                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['haute']- $s_dep_int['salaireTotale']['haute'];
-                                                                $TotSaison2 += $filtre_interval[$i]['salaireTotale']['moyenne']-$s_dep_int['salaireTotale']['moyenne'];
-                                                                $TotSaison3 += $filtre_interval[$i]['salaireTotale']['basse']-$s_dep_int['salaireTotale']['basse'];
 
 
-                                                                $i++;
-                                                            }
+                                                                $TotSaison1 += $filtre_interval[$x]['salaireTotale']['haute']- $s_dep_int['salaireTotale']['haute'];
+                                                                $TotSaison2 += $filtre_interval[$x]['salaireTotale']['moyenne']- $s_dep_int['salaireTotale']['moyenne'];
+                                                                $TotSaison3 += $filtre_interval[$x]['salaireTotale']['basse']- $s_dep_int['salaireTotale']['basse'];
+
+
+                                                                
+
                                                             ?>
-                                                            <td>
+                                                            <td style="text-align: right">
                                                                 <?php
 
 
@@ -195,38 +171,20 @@ foreach ($salaire as $item) {
 
 
                                                                         ?>
-                                                                        <table style=" margin-left: auto; margin-right: auto;">
+                                                                        <div class="form-group row ">
+                                                                            <label
+                                                                                    class="control-label col-md-12 col-sm-3 "><?php echo number_format($filtre_interval[$x]['salaireTotale'][$ss['typeS']] - $s_dep_int['salaireTotale'][$ss['typeS']], 3, ',', ','); ?></label>
+                                                                        </div>
 
-                                                                            <tr>
-                                                                                <td>
-
-                                                                                    <input
-
-                                                                                        value="<?php echo number_format($filtre_interval[$x]['salaireTotale'][$ss['typeS']] - $s_dep_int['salaireTotale'][$ss['typeS']], 3, ',', ','); ?>"
-                                                                                        disabled
-                                                                                        style="height: 35px;width: 75px"
-                                                                                    >
-
-                                                                                </td>
-                                                                            </tr>
-
-                                                                        </table>
                                                                         <?php
 
 
                                                                     } else {
                                                                         ?>
-                                                                        <table style=" margin-left: auto; margin-right: auto;">
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <input
-
-                                                                                        value="<?php echo number_format(0, 3, ',', ','); ?>"
-                                                                                        disabled
-                                                                                        style="height: 35px;width: 75px">
-                                                                                </td>
-                                                                            </tr>
-                                                                        </table>
+                                                                        <div class="form-group row ">
+                                                                            <label style="vertical-align: middle; text-align: right;"
+                                                                                   class="control-label col-md-12 col-sm-3 "><?php echo number_format(0, 3, ',', ','); ?></label>
+                                                                        </div>
                                                                         <?php
                                                                     }
 
@@ -248,76 +206,57 @@ foreach ($salaire as $item) {
 
                                                         ?>
 
-                                                        <td style="text-align:center;">
+                                                        <td>
                                                             <?php foreach ($saison as $s) { ?>
-                                                                <table style=" margin-left: auto; margin-right: auto;">
-                                                                    <tr>
-                                                                        <td>
-                                                                            <?php
-                                                                            if ($s['typeS'] == 'haute') {
-                                                                                $Total += $TotSaison1;
-                                                                                ?>
-                                                                                <input style="height: 35px;width: 75px"
-                                                                                       ;
-                                                                                       name="salSaison1"
-
-                                                                                       value="<?php echo number_format($TotSaison1, 3, ',', ',');
-                                                                                       ?>"
-                                                                                       disabled="disabled">
-
-                                                                                <?php
-
-                                                                            }
-
-                                                                            if ($s['typeS'] == 'moyenne') {
-                                                                                $Total += $TotSaison2; ?>
+                                                                <?php
+                                                                if ($s['typeS'] == 'haute') {
+                                                                    $Total += $TotSaison1;
+                                                                    ?>
+                                                                    <div class="form-group row"
+                                                                         style="vertical-align: middle; text-align: right;">
+                                                                        <label
+                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison1, 3, ',', ','); ?></label>
+                                                                    </div>
 
 
-                                                                                <input
-                                                                                    style="height: 35px;width: 75px"
-                                                                                    ;
-                                                                                    name="salSaison2"
 
-                                                                                    value="<?php echo number_format($TotSaison2, 3, ',', ',');
-                                                                                    ?>"
-                                                                                    disabled="disabled">
+                                                                    <?php
 
-                                                                            <?php }
-                                                                            if ($s['typeS'] == 'basse') {
-                                                                                $Total += $TotSaison3; ?>
-                                                                                <input
-                                                                                    style="height: 35px;width: 75px"
-                                                                                    ;
-                                                                                    name="salSaison2"
-                                                                                    value="<?php echo number_format($TotSaison3, 3, ',', ',');
-                                                                                    ?>" disabled>
+                                                                }
+
+                                                                if ($s['typeS'] == 'moyenne') {
+                                                                    $Total += $TotSaison2; ?>
+                                                                    <div class="form-group row " style="vertical-align: middle; text-align: right;">
+                                                                        <label
+                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison2, 3, ',', ','); ?></label>
+                                                                    </div>
 
 
-                                                                                <?php
+                                                                <?php }
+                                                                if ($s['typeS'] == 'basse') {
+                                                                    $Total += $TotSaison3; ?>
+                                                                    <div class="form-group row "
+                                                                         style="vertical-align: middle; text-align: right;">
+                                                                        <label
+                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison3, 3, ',', ','); ?></label>
+                                                                    </div>
 
-                                                                            } ?>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
+
+                                                                    <?php
+
+                                                                } ?>
                                                                 <?php
                                                             } ?>
                                                         </td>
-                                                        <td style="vertical-align: middle; text-align: center;">
-
-                                                            <input
-                                                                value="<?php
-                                                                echo number_format($Total, 3, ',', ',');
-
-                                                                ?>" disabled
-                                                                style="height: 35px;width: 75px" ;
-                                                            >
-
+                                                        <td style="vertical-align: middle;">
+                                                            <div class="form-group row " style="vertical-align: middle; text-align: right">
+                                                                <label
+                                                                        class="control-label col-md-12 col-sm-3 "><?php echo number_format($Total, 3, ',', ','); ?></label>
+                                                            </div>
 
                                                         </td>
                                                     </tr>
-                                                    <?php
 
-                                                    ?>
                                                     </tbody>
                                                 </table>
                                             </div>

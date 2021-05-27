@@ -141,6 +141,7 @@ if (isset($_GET['id'])) {
                                                                        value="<?php echo $c['_id']; ?>"
                                                                        onchange="action(this.value,'desac');"
                                                                        checked="true"
+                                                                       <?php if ($UserConnect['name'] == $c['name']){ ?>disabled<?php } ?>
 
                                                                 />
                                                             </label>
@@ -152,6 +153,7 @@ if (isset($_GET['id'])) {
                                                                            name="switch"
                                                                            value="<?php echo $c['_id']; ?>"
                                                                            onchange="action(this.value,'actif');"
+                                                                           <?php if ($UserConnect['name'] == $c['name']){ ?>disabled<?php } ?>
                                                                     />
 
 
