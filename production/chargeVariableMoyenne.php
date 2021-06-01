@@ -3,7 +3,7 @@ include("config.php");
 $salaire = $collection_salaire->find()->sort(array('department' => 1));
 $department = $collection_Department->find()->sort(array('nameDep' => 1));
 
-$saison = $collection_saison->find();
+$saison = $collection_saison->findOne(array('typeS' => 'moyenne'));
 
 $a = array();
 
@@ -66,7 +66,7 @@ foreach ($salaire as $item) {
             <div class="">
                 <div class="page-title">
                     <div class="title_left">
-                        <h3>Charge Variable</h3>
+                        <h3>Charge Variable Moyenne saison</h3>
                     </div>
                     <div class="title_right">
                         <div class="col-md-5 col-sm-5  form-group pull-right top_search">
@@ -97,15 +97,19 @@ foreach ($salaire as $item) {
                                                     <thead class="headings">
                                                     <tr>
                                                         <th style="text-align: center;">Département</th>
-                                                        <th style="text-align: center">Type saison</th>
-                                                        <?php for ($j = 0; $j < count($dep['interval']); $j++) { ?>
-                                                            <th style="text-align: center">
-                                                                <?php echo $dep['interval'][$j]['n1']; ?>
+                                                        <th style="text-align: center;">
+                                                            <?php echo $dep['interval'][0]['n1']; ?>
+                                                            -
+                                                            <?php echo $dep['interval'][0]['n2'] * $saison['days']; ?>
+                                                        </th>
+
+                                                        <?php for ($j = 1; $j < count($dep['interval']); $j++) { ?>
+                                                            <th style="text-align: center;">
+                                                                <?php echo ($dep['interval'][$j - 1]['n2'] * $saison['days']) + 1; ?>
                                                                 -
-                                                                <?php echo $dep['interval'][$j]['n2']; ?>
+                                                                <?php echo $dep['interval'][$j]['n2'] * $saison['days']; ?>
                                                             </th>
                                                         <?php } ?>
-                                                        
 
 
                                                     </tr>
@@ -115,23 +119,8 @@ foreach ($salaire as $item) {
                                                     <tbody>
 
 
-
                                                     <tr>
                                                         <td style="text-align: center; vertical-align: middle;"> <?php echo $dep['nameDep']; ?></td>
-                                                        <td>
-                                                            <?php
-                                                            foreach ($saison as $s) {
-
-                                                                ?>
-
-
-                                                                <div class="form-group row " style="text-align: center">
-                                                                    <label style="text-transform: capitalize;"
-                                                                           class="control-label col-md-12 col-sm-3 "><?php echo $s['typeS']; ?></label>
-                                                                </div>
-
-                                                            <?php } ?>
-                                                        </td>
                                                         <?php
                                                         $depp = $dep['nameDep'];
                                                         $int1 = $dep['interval'][0]['n1'] . " - " . $dep['interval'][0]['n2'];
@@ -148,41 +137,33 @@ foreach ($salaire as $item) {
                                                             });
 
 
-
-
-                                                                
-
                                                             ?>
                                                             <td style="text-align: right">
                                                                 <?php
 
 
-                                                                foreach ($saison as $ss) {
+                                                                if (sizeof($filtre_interval) != 0) {
 
 
-                                                                    if (sizeof($filtre_interval) != 0) {
+                                                                    ?>
+                                                                    <div class="form-group row ">
+                                                                        <label
+                                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format(($filtre_interval[$x]['salaireTotale']['moyenne'] - $s_dep_int['salaireTotale']['moyenne']) * $saison['days'], 3, ',', ','); ?></label>
+                                                                    </div>
+
+                                                                    <?php
 
 
-                                                                        ?>
-                                                                        <div class="form-group row ">
-                                                                            <label
-                                                                                    class="control-label col-md-12 col-sm-3 "><?php echo number_format($filtre_interval[$x]['salaireTotale'][$ss['typeS']] - $s_dep_int['salaireTotale'][$ss['typeS']], 3, ',', ','); ?></label>
-                                                                        </div>
-
-                                                                        <?php
-
-
-                                                                    } else {
-                                                                        ?>
-                                                                        <div class="form-group row ">
-                                                                            <label style="vertical-align: middle; text-align: right;"
-                                                                                   class="control-label col-md-12 col-sm-3 "><?php echo number_format(0, 3, ',', ','); ?></label>
-                                                                        </div>
-                                                                        <?php
-                                                                    }
-
-
+                                                                } else {
+                                                                    ?>
+                                                                    <div class="form-group row ">
+                                                                        <label style="vertical-align: middle; text-align: right;"
+                                                                               class="control-label col-md-12 col-sm-3 "><?php echo number_format(0, 3, ',', ','); ?></label>
+                                                                    </div>
+                                                                    <?php
                                                                 }
+
+
                                                                 if (sizeof($filtre_interval) != 0) {
                                                                     $x++;
                                                                 }

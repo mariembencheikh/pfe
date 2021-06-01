@@ -110,15 +110,46 @@ if (empty($UserConnect)) {
                             </li>
                         </ul>
                     </li>
-                    <li><a>Les charges<span class="fa fa-chevron-down"></span></a>
+                    <li><a>Charge Fixe<span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-
-                            <li class="sub_menu"><a href="chargeTotale.php">Totale</a></li>
-                            <li class="sub_menu"><a href="chargeFixe.php">Fixe</a></li>
-                            <li class="sub_menu"><a href="chargeVariable.php">Variables</a></li>
+                            <li class="sub_menu"><a href="chargeFixe.php">Par jour</a>
+                            </li>
+                            <li><a>Par saison<span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li class="sub_menu"><a href="chargeFixeHaute.php">Haute</a></li>
+                                    <li class="sub_menu"><a href="chargeFixeMoyenne.php">Moyenne</a></li>
+                                    <li class="sub_menu"><a href="chargeFixeBasse.php">Basse</a></li>
+                                </ul>
+                            </li>
                         </ul>
-
                     </li>
+                    <li><a>Charge Variable<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li class="sub_menu"><a href="chargeVariable.php">Par jour</a>
+                            </li>
+                            <li><a>Par saison<span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li class="sub_menu"><a href="chargeVariableHaute.php">Haute</a></li>
+                                    <li class="sub_menu"><a href="chargeVariableMoyenne.php">Moyenne</a></li>
+                                    <li class="sub_menu"><a href="chargeVariableBasse.php">Basse</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a>Charge Totale<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li class="sub_menu"><a href="chargeTotale.php">Par jour</a>
+                            </li>
+                            <li><a>Par saison<span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li class="sub_menu"><a href="chargeTotaleHaute.php">Haute</a></li>
+                                    <li class="sub_menu"><a href="chargeTotaleMoyenne.php">Moyenne</a></li>
+                                    <li class="sub_menu"><a href="chargeTotaleBasse.php">Basse</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
 
 
                 </ul>
@@ -127,6 +158,13 @@ if (empty($UserConnect)) {
                 <ul class="nav child_menu">
 
                     <li><a href="simulateur.php">Table simulation</a></li>
+
+                </ul>
+            </li>
+            <li><a><i class="fa fa-bar-chart-o"></i> Statistique <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+
+                    <li><a href="statDepJour.php">Départment par jour</a></li>
 
                 </ul>
             </li>

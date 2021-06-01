@@ -7,7 +7,7 @@
 include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
-    $function = $_POST['function'];
+    $function = rtrim($_POST['function']);
     $salary = $_POST['salary'];
     $select=$_POST['select'];
     $cursorDepartment=$collection_Department->findOne(array('nameDep'=>$select));

@@ -2,10 +2,7 @@
 include("config.php");
 session_start();
 $_SESSION["email"];
-
-
-if (isset($_POST["ok"])) {
-}
+$cursor = $collection_nbNuitPrevisionnel->find();
 
 
 ?>
@@ -79,35 +76,74 @@ if (isset($_POST["ok"])) {
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
-                                <form class="form-horizontal form-label-left" method="GET">
+                                <form class="form-horizontal form-label-left" method="GET" action="simulateur.php?id=">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align"> Type saison<span
+                                                    class="required">*</span></label>
+                                        <div class="col-md-2 col-sm-2 ">
+                                            <select id="saison" class="select2_single form-control" tabindex="-1"
+                                                    name="typeS"
+                                                    required>
+                                                <option></option>
+
+                                                <option value="haute"
+                                                    <?php if ($_GET['typeS'] == 'haute') { ?> selected="selected"
+                                                    <?php } ?> >
+                                                    Haute Saison
+                                                </option>
+                                                <option value="moyenne"
+                                                    <?php if ($_GET['typeS'] == 'moyenne') { ?> selected="selected"
+                                                    <?php } ?> >
+                                                    Moyenne saison
+                                                </option>
+                                                <option value="basse"
+                                                    <?php if ($_GET['typeS'] == 'basse') { ?> selected="selected"
+                                                    <?php } ?> >
+                                                    Basse saison
+                                                </option>
+
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-3 col-sm-3 label-align"> Nombre de nuitée
                                             Prévisionnel<span
                                                     class="required">*</span></label>
-                                        <div class="col-md-6 col-sm-6 ">
+                                        <div class="col-md-2 col-sm-2 ">
                                             <input type="number" id="number" step="any" name="nbNuit"
-                                                   class="form-control" min="0" value="<?php echo $_GET['nbNuit']; ?>">
+                                                   class="form-control" min="0" value="<?php echo $_GET['nbNuit']; ?>"
+                                                   required>
                                         </div>
                                     </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 offset-md-3">
-                                <input class="btn btn-success" name="submit" type="submit" value="Simuler"/>
+                                    <div class="col-md-6 col-sm-6 offset-md-3">
+                                        <input class="btn btn-success" name="submit" type="submit" value="Simuler"/>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="ln_solid"></div>
+                        <!--                        <div class="ln_solid"></div>-->
 
-                        </form>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class=" table-responsive">
                                     <table class="table table-striped jambo_table bulk_action" id="table"
                                            style="width:100%">
-                                        <?php if (isset($_GET['nbNuit'])){
+                                        <?php if (isset($_GET['submit'])){
+                                        $nbNuit = $collection_nbNuitPrevisionnel->findOne(array('typeS' => $_GET['typeS']));
+
+                                        if (empty($nbNuit)) {
+                                            $collection_nbNuitPrevisionnel->insert(array('typeS' => $_GET['typeS'], 'nbNuit' => $_GET['nbNuit']));
+                                        } else {
+
+                                            $collection_nbNuitPrevisionnel->update(array('typeS' => $_GET['typeS']), array('typeS' => $_GET['typeS'], 'nbNuit' => $_GET['nbNuit']));
+                                        }
+
+
                                         $departments = $collection_Department->find()->sort(array('nameDep' => 1));
                                         $salaire = $collection_salaire->find()->sort(array('department' => 1));
                                         $department = $collection_Department->find()->sort(array('nameDep' => 1));
 
-                                        $saison = $collection_saison->find();
+                                        $saison = $collection_saison->findOne(array('typeS' => 'basse'));
 
                                         $a = array();
 
@@ -115,10 +151,11 @@ if (isset($_POST["ok"])) {
                                             array_push($a, $item);
                                         }
 
+
                                         ?>
                                         <thead class="headings">
                                         <tr>
-                                            <th style="text-align: center;">Service</th>
+                                            <th>Service</th>
                                             <th style="text-align: center;">Charge Fixe</th>
                                             <th style="text-align: center;">Charge Variable</th>
                                             <th style="text-align: center;">Charge Totale</th>
@@ -128,63 +165,234 @@ if (isset($_POST["ok"])) {
                                         </thead>
 
                                         <tbody>
-                                        <?php foreach ($departments as $dep) {
+                                        <?php
+                                        $x = 0;
+                                        $TotaleChargeFixe = 0;
+                                        $TotaleChargeVariable = 0;
+                                        $TotaleChargeTotale = 0;
+                                        $TotaleEcart = 0;
+                                        $TotaleJournalePaie = 0;
+
+                                        foreach ($departments as $dep) {
+                                            $journalePaie = 0;
+                                            $ChargeTotale = 0;
+                                            $Ecart = 0;
+
+                                            $depp = $dep['nameDep'];
+                                            $interval = $dep['interval'][0]['n1'] . " - " . $dep['interval'][0]['n2'];
+                                            $s_dep_int = $collection_salaire->findOne(array("department" => $depp, "interval" => $interval));
+
                                             ?>
                                             <tr>
 
                                                 <td><?php echo $dep['nameDep']; ?></td>
-                                                <td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td>
 
+
+                                                <!-- Charge fixe Basse saison -->
+                                                <td style="text-align: center">
+                                                    <?php
+                                                    $fixe = $s_dep_int['salaireTotale']['basse'] * $saison['days'];
+                                                    $TotaleChargeFixe += $fixe;
+
+                                                    if (!empty($s_dep_int)) {
+                                                        ?>
+                                                        <div class="form-group row " style="text-align: right">
+                                                            <label
+                                                                    class="control-label col-md-12 col-sm-3 "><?php echo number_format($fixe, 3, ',', ','); ?>
+                                                            </label>
+                                                        </div>
+                                                        <?php
+                                                    } else {
+                                                        ?>
+                                                        <div class="form-group row ">
+                                                            <label style="vertical-align: middle; text-align: right;"
+                                                                   class="control-label col-md-12 col-sm-3 "><?php echo number_format(0, 3, ',', ','); ?></label>
+                                                        </div>
+
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <!-- Fin Charge fixe Basse saison -->
+
+                                                <!-- Charge variable Basse saison -->
+                                                <?php
+
+                                                for ($j = 0; $j < count($dep['interval']); $j++) {
+                                                    $filtre_interval = array();
+                                                    $interval = $dep['interval'][$j]['n1'] . " - " . $dep['interval'][$j]['n2'];
+                                                    $filtre_interval = array_filter($a, function ($p) use ($interval, $depp) {
+                                                        return (($p["interval"] == $interval) && $p['department'] == $depp);
+                                                    });
+                                                    if (sizeof($filtre_interval) != 0) {
+
+                                                        if (($_GET['nbNuit'] <= $dep['interval'][$j]['n2'] * $saison['days']) && ($_GET['nbNuit'] >= $dep['interval'][$j - 1]['n2'] * $saison['days'])) {
+                                                            $variable = ($filtre_interval[$x]['salaireTotale']['basse'] - $s_dep_int['salaireTotale']['basse']) * $saison['days'];
+                                                        } elseif ($_GET['nbNuit'] >= $dep['interval'][$j]['n2'] * $saison['days']) {
+                                                            $variable = ($filtre_interval[$x]['salaireTotale']['basse'] - $s_dep_int['salaireTotale']['basse']) * $saison['days'];
+
+                                                        }
+                                                        $ChargeTotale = $fixe + $variable;
+                                                        $Ecart = $ChargeTotale - $journalePaie;
+                                                        $x++;
+
+                                                    } else {
+
+                                                        $variable = 0;
+                                                    }
+
+                                                }
+
+                                                $TotaleChargeVariable += $variable;
+                                                $TotaleChargeTotale += $ChargeTotale;
+                                                $TotaleEcart += $Ecart;
+
+                                                ?>
+                                                <td style="text-align: right">
+
+                                                    <div class="form-group row ">
+                                                        <label
+                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($variable, 3, ',', ','); ?></label>
+                                                    </div>
+
+                                                </td>
+
+                                                <!-- Fin Charge variable Basse saison -->
+
+                                                <!-- Charge totale Basse saison -->
+                                                <td style="text-align: right">
+                                                    <div class="form-group row ">
+                                                        <label
+                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($ChargeTotale, 3, ',', ','); ?></label>
+                                                    </div>
+                                                </td>
+                                                <!-- Fin Charge totale Basse saison -->
+
+                                                <!-- Journal  de paie Basse saison -->
+                                                <td style="text-align: right">
+                                                    <div class="form-group row ">
+                                                        <label
+                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($journalePaie, 3, ',', ','); ?></label>
+                                                    </div>
+                                                </td>
+                                                <!-- Fin Journal  de paie Basse saison -->
+
+                                                <!-- Ecart Basse saison -->
+                                                <td style="text-align: right">
+                                                    <div class="form-group row ">
+                                                        <label
+                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($Ecart, 3, ',', ','); ?></label>
+                                                    </div>
+                                                </td>
+                                                <!-- Fin Ecart Basse saison -->
                                             </tr>
                                         <?php } ?>
                                         <tr>
-                                            <td style="font-size: medium; color: #5e79ff">Charge Brute Totale</td>
-                                            <td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td><td style="text-align: center">test</td>
+                                            <td style="font-size: x-large; color: #5e79ff;">Charge Brute Totale</td>
+
+
+                                            <!-- Totale charge fixe Basse saison -->
+                                            <td style="text-align: right">
+                                                <div class="form-group row ">
+                                                    <label
+                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotaleChargeFixe, 3, ',', ','); ?>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <!-- fin  Totale charge fixe Basse saison -->
+
+
+                                            <!-- Totale charge Variable Basse saison -->
+                                            <td style="text-align: right">
+                                                <div class="form-group row ">
+                                                    <label
+                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotaleChargeVariable, 3, ',', ','); ?>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <!-- Fin Totale charge variable Basse saison -->
+
+                                            <!-- Totale charge totale Basse saison -->
+                                            <td style="text-align: right">
+                                                <div class="form-group row ">
+                                                    <label
+                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotaleChargeTotale, 3, ',', ','); ?>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <!-- Fin Totale charge totale Basse saison -->
+
+                                            <!--  Totale Journal  de paie Basse saison -->
+                                            <td style="text-align: right">
+                                                <div class="form-group row ">
+                                                    <label
+                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotaleJournalePaie, 3, ',', ','); ?>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <!-- fin Totale Journal  de paie Basse saison -->
+
+                                            <!-- Totale Ecart Basse saison -->
+                                            <td style="text-align: right">
+                                                <div class="form-group row ">
+                                                    <label
+                                                            class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotaleEcart, 3, ',', ','); ?>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <!-- Fin Totale Ecart Basse saison -->
+
                                         </tr>
-
-
                                         <?php } ?>
                                     </table>
                                     <br>
                                     <br>
+
                                     <div class="col-md-6 col-sm-12">
 
 
                                         <?php if (isset($_GET['nbNuit'])) {
-                                            $coutFixe=$collection_coutFixe->find();
+                                            $nb = $_GET['nbNuit'];
+                                            $coutFixe = $collection_coutFixe->find();
                                             ?>
                                             <table class="table">
-
                                                 <tbody>
                                                 <?php
+                                                $chargeSalarialeTotale = 0;
                                                 $cursor = $collection_coutFixe->find();
-                                                foreach ($cursor as $c) {?>
+                                                foreach ($cursor as $c) {
+                                                    $tfp = ($TotaleChargeTotale * $c['foprolos']) / 100;
+                                                    $patronale = ($TotaleChargeTotale * $c['chargePat']) / 100;
+                                                    $prime = ($TotaleChargeTotale / 6) * $c['prime'];
+                                                    $conge = ($TotaleChargeTotale / 26) * $c['conge'];
+                                                    $chargeSalarialeTotale += $TotaleChargeTotale + $tfp + $patronale + $prime + $conge; ?>
                                                     <tr>
                                                         <th>TFP & FOPROLOS</th>
-                                                        <td><?php echo $c['foprolos'];?>&nbsp;%</td>
+                                                        <td><?php echo number_format($tfp, 0, ' ', ' '); ?></td>
                                                     </tr>
 
                                                     <tr>
                                                         <th>Charge sociale patronale</th>
-                                                        <td><?php echo $c['chargePat'];?>&nbsp;%</td>
+                                                        <td><?php echo number_format($patronale, 0, ' ', ' '); ?></td>
                                                     </tr>
                                                     <tr>
                                                         <th>Provision Prime</th>
-                                                        <td><?php echo $c['prime'];?>&nbsp;%</td>
+                                                        <td><?php echo number_format($prime, 0, ' ', ' '); ?></td>
                                                     </tr>
                                                     <tr>
                                                         <th>Provision congé</th>
-                                                        <td><?php echo $c['conge'];?>&nbsp;%</td>
+                                                        <td><?php echo number_format($conge, 0, ' ', ' '); ?></td>
+
+
                                                     </tr>
                                                     <tr>
                                                         <th>Charge salariale totale</th>
-                                                        <td></td>
+                                                        <td><?php echo number_format($chargeSalarialeTotale, 0, ' ', ' '); ?></td>
                                                     </tr>
                                                     <tr>
                                                         <th>Charge Variable / Nuitée</th>
-                                                        <td></td>
+                                                        <td><?php echo $TotaleChargeVariable / $nb; ?></td>
                                                     </tr>
-
 
 
                                                     <?php

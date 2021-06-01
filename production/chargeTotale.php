@@ -106,22 +106,14 @@ foreach ($salaire as $item) {
                                                                 <?php echo $dep['interval'][$j]['n2']; ?>
                                                             </th>
                                                         <?php } ?>
-                                                        <th style="text-align: center">Totale par saison</th>
-                                                        <th style="text-align: center">Totale</th>
+
 
                                                     </tr>
                                                     </thead>
 
 
                                                     <tbody>
-                                                    <?php
 
-
-                                                    $Total = 0;
-                                                    $TotSaison1 = 0;
-                                                    $TotSaison2 = 0;
-                                                    $TotSaison3 = 0;
-                                                    ?>
 
 
                                                     <tr>
@@ -154,15 +146,7 @@ foreach ($salaire as $item) {
                                                             $filtre_interval = array_filter($a, function ($p) use ($interval, $depp) {
                                                                 return (($p["interval"] == $interval) && $p['department'] == $depp);
                                                             });
-                                                            while ($i < count($a)) {
 
-                                                                $TotSaison1 += $filtre_interval[$i]['salaireTotale']['haute'];
-                                                                $TotSaison2 += $filtre_interval[$i]['salaireTotale']['moyenne'];
-                                                                $TotSaison3 += $filtre_interval[$i]['salaireTotale']['basse'];
-
-
-                                                                $i++;
-                                                            }
                                                             ?>
                                                             <td style="text-align: right;">
                                                                 <?php
@@ -212,56 +196,7 @@ foreach ($salaire as $item) {
 
                                                         ?>
 
-                                                        <td>
-                                                            <?php foreach ($saison as $s) { ?>
-                                                                <?php
-                                                                if ($s['typeS'] == 'haute') {
-                                                                    $Total += $TotSaison1;
-                                                                    ?>
-                                                                    <div class="form-group row"
-                                                                         style="vertical-align: middle; text-align: right;">
-                                                                        <label
-                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison1, 3, ',', ','); ?></label>
-                                                                    </div>
 
-
-                                                                    <?php
-
-                                                                }
-
-                                                                if ($s['typeS'] == 'moyenne') {
-                                                                    $Total += $TotSaison2; ?>
-
-                                                                    <div class="form-group row " style="vertical-align: middle; text-align: right;">
-                                                                        <label
-                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison2, 3, ',', ','); ?></label>
-                                                                    </div>
-
-                                                                <?php }
-                                                                if ($s['typeS'] == 'basse') {
-                                                                    $Total += $TotSaison3; ?>
-                                                                    <div class="form-group row "
-                                                                         style="vertical-align: middle; text-align: right;">
-                                                                        <label
-                                                                                class="control-label col-md-12 col-sm-3 "><?php echo number_format($TotSaison3, 3, ',', ','); ?></label>
-                                                                    </div>
-
-
-                                                                    <?php
-
-                                                                } ?>
-                                                                <?php
-                                                            } ?>
-                                                        </td>
-                                                        <td style="vertical-align: middle">
-
-                                                            <div class="form-group row " style="vertical-align: middle; text-align: right">
-                                                                <label
-                                                                        class="control-label col-md-12 col-sm-3 "><?php echo number_format($Total, 3, ',', ','); ?></label>
-                                                            </div>
-
-
-                                                        </td>
                                                     </tr>
                                                     <?php
 

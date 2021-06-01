@@ -8,7 +8,7 @@
 <?php
 include("config.php");
 session_start();
-$name = $_POST['nameDep'];
+$name = rtrim($_POST['nameDep']);
 $table = array();
 if (isset($_POST["submit"])) {
 

@@ -3,7 +3,7 @@ include("config.php");
 session_start();
 
 if (isset($_POST["submit"])) {
-    $nameDep = $_POST['nameDep'];
+    $nameDep = rtrim($_POST['nameDep']);
     $id = $_POST['id'];
 
     $newdata = array('$set' => array("nameDep" => $nameDep, "modifiedBy" => $_SESSION['email'], "editTime" => new DateTime()));

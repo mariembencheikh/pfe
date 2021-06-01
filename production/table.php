@@ -49,9 +49,9 @@ if (isset($_POST["ok"])) {
             $saison2 = 0;
             $saison3 = 0;
             foreach ($cursor as $cs) {
-                $saison1 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['haute'];
-                $saison2 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['moyenne'];
-                $saison3 += ($cs['salary']/26) * $filtre_interval[$k][$cs['function']]['basse'];
+                $saison1 += ($cs['salary'] / 26) * $filtre_interval[$k][$cs['function']]['haute'];
+                $saison2 += ($cs['salary'] / 26) * $filtre_interval[$k][$cs['function']]['moyenne'];
+                $saison3 += ($cs['salary'] / 26) * $filtre_interval[$k][$cs['function']]['basse'];
 
                 $d['salaireTotale'] = array('haute' => $saison1, 'moyenne' => $saison2, 'basse' => $saison3);
                 $j++;
@@ -92,9 +92,9 @@ if (isset($_POST["ok"])) {
             $saison2 = 0;
             $saison3 = 0;
             foreach ($cursor as $cs) {
-                $saison1 += ($cs['salary']/26) * $a[$k][$cs['function']]['haute'];
-                $saison2 += ($cs['salary']/26) * $a[$k][$cs['function']]['moyenne'];
-                $saison3 += ($cs['salary']/26) * $a[$k][$cs['function']]['basse'];
+                $saison1 += ($cs['salary'] / 26) * $a[$k][$cs['function']]['haute'];
+                $saison2 += ($cs['salary'] / 26) * $a[$k][$cs['function']]['moyenne'];
+                $saison3 += ($cs['salary'] / 26) * $a[$k][$cs['function']]['basse'];
 
                 $d['salaireTotale'] = array('haute' => $saison1, 'moyenne' => $saison2, 'basse' => $saison3);
                 $j++;
@@ -128,10 +128,10 @@ if (isset($_POST["ok"])) {
 
     <title>DataTables | Gentelella</title>
     <script src="../vendors/jquery/dist/jquery.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-            crossorigin="anonymous"></script>
+    <!--    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>-->
+    <!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"-->
+    <!--            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="-->
+    <!--            crossorigin="anonymous"></script>-->
     <!-- Bootstrap -->
     <link href="cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -221,355 +221,497 @@ if (isset($_POST["ok"])) {
                                                     if (isset($_GET["select"])) {
                                                         $select = $_GET['select'];
                                                         $cursor = $collection_Department->findOne(array('nameDep' => $select));
-                                                        usort($cursor['interval'], function ($a, $b) {
-
-                                                            return $a['ordre'] - $b['ordre'];
-                                                        });
-                                                        if (count($cursor['interval']) == 0) {
-                                                            echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Ajouter intervalles occupation pour ce department d\'abord",icon: "error",confirmButtonText: "OK"})});</script>';
-                                                        } else {
+                                                        $cursorFunction = $collection_Employees->find(array('department' => $select));
+                                                        $nbNuites = $collection_nbNuitPrevisionnel->find();
+                                                        $saison = $collection_saison->find();
 
 
-                                                            $cursorFunction = $collection_Employees->find(array('department' => $select));
-                                                            
+                                                        //Department etage
+                                                        if ($select == 'Etage') {
+                                                            ?>
+                                                            <thead class="headings">
+                                                            <tr>
+                                                                <th style="text-align: center;">Type saison</th>
+                                                                <th style="text-align: center;">Nb nuitées prévisonnel
+                                                                </th>
 
-                                                            $nb = $collection_nbPersonnel->count(array('department' => $select));
-                                                            $saison = $collection_saison->find();
-                                                            if ($nb == 0) {
-                                                                ?>
-                                                                <input type="text" name="dep"
-                                                                       value="<?php echo $select; ?>"
-                                                                       hidden>
+                                                                <?php foreach ($cursorFunction as $c) { ?>
 
-                                                                <thead class="headings">
-                                                                <tr>
-                                                                    <th style="text-align: center;">Ordre</th>
-                                                                    <th style="text-align: center;">Nb clients</th>
-                                                                    <th style="text-align: center;">Type saison</th>
-                                                                    <?php foreach ($cursorFunction as $c) { ?>
-
-                                                                        <th style="text-align: center;"><?php echo $c['function'] ?> </th>
-                                                                        <?php
-                                                                    }
-                                                                    ?>
-
-                                                                </tr>
-                                                                </thead>
-
-                                                                <tbody>
-                                                                <?php
-                                                                //                                                            $i = 0;
-                                                                for ($i = 0; $i < count($cursor['interval']); $i++) {
-                                                                    $j = 0;
-
-                                                                    ?>
-                                                                    <tr>
-                                                                        <td style="text-align: center; vertical-align: middle;"> <?php echo $cursor['interval'][$i]['ordre']; ?></td>
-                                                                        <td style="text-align: center; vertical-align: middle;"> <?php echo $cursor['interval'][$i]['n1']; ?>
-                                                                            - <?php echo $cursor['interval'][$i]['n2']; ?></td>
-                                                                        <td>
-                                                                            <table style=" margin-left: auto; margin-right: auto;">
-                                                                                <?php foreach ($saison as $s) { ?>
-                                                                                    <tr>
-                                                                                        <?php if ($s['typeS'] == 'haute') { ?>
-                                                                                            <td>
-
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Haute</label>
-                                                                                            </td>
-
-                                                                                            <?php
-                                                                                        }
-                                                                                        if ($s['typeS'] == 'moyenne') {
-                                                                                            ?>
-                                                                                            <td>
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Moyenne</label>
-                                                                                            </td>
-
-                                                                                            <?php
-                                                                                        }
-                                                                                        if ($s['typeS'] == 'basse') {
-                                                                                            ?>
-                                                                                            <td>
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Basse</label>
-                                                                                            </td>
-
-                                                                                        <?php } ?>
-                                                                                    </tr>
-
-                                                                                    <?php
-
-                                                                                } ?>
-
-                                                                            </table>
-                                                                        </td>
-
-                                                                        <?php
-                                                                        foreach ($cursorFunction as $c) { ?>
-
-                                                                            <td>
-                                                                                <?php foreach ($saison as $s) { ?>
-                                                                                    <table style=" margin-left: auto; margin-right: auto;">
-                                                                                        <tr>
-                                                                                            <td>
-                                                                                                <input type="number"
-                                                                                                       class="form-control"
-                                                                                                       name="<?php echo $s['typeS'] . $i . $j; ?>"
-                                                                                                       required="required"
-                                                                                                       style="width: 80px;text-align: right"
-                                                                                                       min="0"
-                                                                                                >
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </table>
-                                                                                <?php } ?>
-                                                                            </td>
-                                                                            <?php
-                                                                            $j++;
-                                                                        }
-                                                                        ?>
-                                                                    </tr>
+                                                                    <th style="text-align: center;"><?php echo $c['function'] ?> </th>
                                                                     <?php
                                                                 }
                                                                 ?>
+                                                                <th style="text-align: center;">Total</th>
 
 
-                                                                </tbody>
+                                                            </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                            <?php
+                                                            foreach ($nbNuites as $n) {
+                                                                if ($n['typeS'] == 'basse') {
+                                                                    $saison = $collection_saison->findOne(array('typeS' => 'basse'));
+                                                                    $nGouvernanteGenerale = 1;
+                                                                    $nFemmedeChambre = ($n['nbNuit'] / 2) / (18 * $saison['days']);
+                                                                    $nGouvernante = (((($n['nbNuit'] / 2) / 30) / 30) / 3) * 1.17;
+                                                                } elseif ($n['typeS'] == 'haute') {
+                                                                    $saison = $collection_saison->findOne(array('typeS' => 'haute'));
+                                                                    $nGouvernanteGenerale = 1;
+                                                                    $nFemmedeChambre = ($n['nbNuit'] / 2) / (18 * $saison['days']);
+                                                                    $nGouvernante = (((($n['nbNuit'] / 2) / 30) / 30) / 3) * 1.17;
+                                                                } elseif ($n['typeS'] == 'moyenne') {
+                                                                    $saison = $collection_saison->findOne(array('typeS' => 'moyenne'));
+                                                                    $nGouvernanteGenerale = 1;
+                                                                    $nFemmedeChambre = ($n['nbNuit'] / 2) / (18 * $saison['days']);
+                                                                    $nGouvernante = (((($n['nbNuit'] / 2) / 30) / 30) / 3) * 1.17;
+                                                                } ?>
+                                                                <tr>
+
+                                                                    <td>
+                                                                        <div class="form-group row "
+                                                                             style="text-align: center">
+                                                                            <label style="text-transform: capitalize;"
+                                                                                   class="control-label col-md-12 col-sm-3 "><?php echo $n['typeS']; ?></label>
+                                                                        </div>
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="form-group row "
+                                                                             style="text-align: center">
+                                                                            <label
+                                                                                    class="control-label col-md-12 col-sm-3 "><?php echo $n['nbNuit']; ?></label>
+                                                                        </div>
+
+                                                                    </td>
+
+                                                                    <?php
+                                                                    $totalSal = 0;
+                                                                    foreach ($cursorFunction as $c) {
+
+                                                                        ?>
+                                                                        <td>
+                                                                            <?php
+
+                                                                            if ($c['function'] == 'Gouvernante générale') {
+                                                                                $totalSal += $nGouvernanteGenerale * $c['salary'];
+
+                                                                                ?>
+                                                                                <div class="form-group row"
+                                                                                     style="text-align: right">
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nGouvernanteGenerale, 2, '.', ''); ?>
+                                                                                    </label>
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nGouvernanteGenerale * $c['salary'], 3, '.', ' '); ?>
+                                                                                    </label>
+                                                                                </div>
+                                                                            <?php }
+                                                                            if ($c['function'] == 'Femme de chambre') {
+                                                                                $totalSal += $nFemmedeChambre * $c['salary'];
+
+                                                                                ?>
+                                                                                <div class="form-group row"
+                                                                                     style="text-align: right">
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nFemmedeChambre, 2, '.', ''); ?>
+                                                                                    </label>
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nFemmedeChambre * $c['salary'], 3, '.', ' '); ?>
+                                                                                    </label>
+                                                                                </div>
+                                                                            <?php }
+                                                                            if ($c['function'] == 'Gouvernante') {
+                                                                                $totalSal += $nGouvernante * $c['salary'];
+
+                                                                                ?>
+                                                                                <div class="form-group row"
+                                                                                     style="text-align: right">
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nGouvernante, 2, '.', ''); ?>
+                                                                                    </label>
+                                                                                    <label
+                                                                                            class="control-label col-md-6 col-sm-3 "><?php echo number_format($nGouvernante * $c['salary'], 3, '.', ' '); ?>
+                                                                                    </label>
+                                                                                </div>
+                                                                            <?php } ?>
+                                                                        </td>
+                                                                        <?php
+
+                                                                    } ?>
+                                                                    <td style="text-align: right">
+                                                                        <div class="form-group row"
+                                                                        >
+                                                                            <label
+                                                                                    class="control-label col-md-12 col-sm-3 "><?php echo number_format($totalSal, 2, '.', ''); ?>
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+
+                                                                </tr>
                                                                 <?php
+                                                            }
+                                                            ?>
+                                                            </tbody>
+                                                        <?php }
+                                                        //Fin department etage
+
+
+
+
+                                                        else {
+                                                            usort($cursor['interval'], function ($a, $b) {
+
+                                                                return $a['ordre'] - $b['ordre'];
+                                                            });
+                                                            if (count($cursor['interval']) == 0) {
+                                                                echo '<script type="text/javascript">$(document).ready(function(){Swal.fire({title: "Erreur!",text: "Ajouter intervalles occupation pour ce department d\'abord",icon: "error",confirmButtonText: "OK"})});</script>';
                                                             } else {
 
-                                                                $nbPersonnel = $collection_nbPersonnel->find(array('department' => $select));
 
-                                                                $a = array();
-
-                                                                foreach ($nbPersonnel as $item) {
-                                                                    array_push($a, $item);
-                                                                }
+                                                                $cursorFunction = $collection_Employees->find(array('department' => $select));
 
 
-                                                                ?>
+                                                                $nb = $collection_nbPersonnel->count(array('department' => $select));
+                                                                $saison = $collection_saison->find();
+                                                                if ($nb == 0) {
+                                                                    ?>
+                                                                    <input type="text" name="dep"
+                                                                           value="<?php echo $select; ?>"
+                                                                           hidden>
 
-                                                                <input type="text" name="dep"
-                                                                       value="<?php echo $select; ?>" hidden>
-                                                                <thead class="headings">
-                                                                <tr>
-                                                                    <th style="text-align: center;">Ordre</th>
-                                                                    <th style="text-align: center; ">Nb clients</th>
-                                                                    <th style="text-align: center;">Type saison</th>
-                                                                    <?php
-                                                                    foreach ($cursorFunction as $cs) {
+                                                                    <thead class="headings">
+                                                                    <tr>
+                                                                        <th style="text-align: center;">Ordre</th>
+                                                                        <th style="text-align: center;">Nb clients</th>
+                                                                        <th style="text-align: center;">Type saison</th>
+                                                                        <?php foreach ($cursorFunction as $c) { ?>
+
+                                                                            <th style="text-align: center;"><?php echo $c['function'] ?> </th>
+                                                                            <?php
+                                                                        }
                                                                         ?>
-                                                                        <th style="text-align: center;"
-                                                                            class="column-title no-link last"
-                                                                            colspan="2"><?php echo $cs['function']; ?></th>
 
+                                                                    </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                    <?php
+                                                                    //                                                            $i = 0;
+                                                                    for ($i = 0; $i < count($cursor['interval']); $i++) {
+                                                                        $j = 0;
+
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td style="text-align: center; vertical-align: middle;"> <?php echo $cursor['interval'][$i]['ordre']; ?></td>
+                                                                            <td style="text-align: center; vertical-align: middle;"> <?php echo $cursor['interval'][$i]['n1']; ?>
+                                                                                - <?php echo $cursor['interval'][$i]['n2']; ?></td>
+                                                                            <td>
+                                                                                <table style=" margin-left: auto; margin-right: auto;">
+                                                                                    <?php foreach ($saison as $s) { ?>
+                                                                                        <tr>
+                                                                                            <?php if ($s['typeS'] == 'haute') { ?>
+                                                                                                <td>
+
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Haute</label>
+                                                                                                </td>
+
+                                                                                                <?php
+                                                                                            }
+                                                                                            if ($s['typeS'] == 'moyenne') {
+                                                                                                ?>
+                                                                                                <td>
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Moyenne</label>
+                                                                                                </td>
+
+                                                                                                <?php
+                                                                                            }
+                                                                                            if ($s['typeS'] == 'basse') {
+                                                                                                ?>
+                                                                                                <td>
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Basse</label>
+                                                                                                </td>
+
+                                                                                            <?php } ?>
+                                                                                        </tr>
+
+                                                                                        <?php
+
+                                                                                    } ?>
+
+                                                                                </table>
+                                                                            </td>
+
+                                                                            <?php
+                                                                            foreach ($cursorFunction as $c) { ?>
+
+                                                                                <td>
+                                                                                    <?php foreach ($saison as $s) { ?>
+                                                                                        <table style=" margin-left: auto; margin-right: auto;">
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <input type="number"
+                                                                                                           class="form-control"
+                                                                                                           name="<?php echo $s['typeS'] . $i . $j; ?>"
+                                                                                                           required="required"
+                                                                                                           style="width: 80px;text-align: right"
+                                                                                                           min="0"
+                                                                                                    >
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                    <?php } ?>
+                                                                                </td>
+                                                                                <?php
+                                                                                $j++;
+                                                                            }
+                                                                            ?>
+                                                                        </tr>
                                                                         <?php
                                                                     }
                                                                     ?>
-                                                                    <th style="text-align: center;"><img
-                                                                                src="https://as2.ftcdn.net/jpg/02/23/33/09/500_F_223330987_RI7wJWZK5aewcHm4dDJ7PXfF5mwdH5EZ.jpg"
-                                                                                alt="Girl in a jacket" width="30"
-                                                                                height="30"> par saison
-                                                                    </th>
-                                                                    <th style="text-align: center;"><img
-                                                                                src="https://as2.ftcdn.net/jpg/02/23/33/09/500_F_223330987_RI7wJWZK5aewcHm4dDJ7PXfF5mwdH5EZ.jpg"
-                                                                                alt="Girl in a jacket" width="30"
-                                                                                height="30"> total
-                                                                    </th>
-                                                                    <!--                                                                <th style="text-align: center;">Somme total</th>-->
 
 
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
+                                                                    </tbody>
+                                                                    <?php
+                                                                } else {
 
-                                                                <?php
-                                                                for ($i = 0; $i < count($cursor['interval']); $i++) {
+                                                                    $nbPersonnel = $collection_nbPersonnel->find(array('department' => $select));
 
+                                                                    $a = array();
 
-                                                                    $saison1 = 0;
-                                                                    $saison2 = 0;
-                                                                    $saison3 = 0;
-                                                                    $totalSal = 0;
-
-                                                                    $j = 0;
+                                                                    foreach ($nbPersonnel as $item) {
+                                                                        array_push($a, $item);
+                                                                    }
 
 
-                                                                    $filtre_interval = array();
-                                                                    $interval = $cursor['interval'][$i]['n1'] . " - " . $cursor['interval'][$i]['n2'];
-                                                                    $saison = $collection_saison->find();
-
-                                                                    $filtre_interval = array_filter($a, function ($p) use ($interval) {
-                                                                        return $p["interval"] == $interval;
-                                                                    });
                                                                     ?>
 
+                                                                    <input type="text" name="dep"
+                                                                           value="<?php echo $select; ?>" hidden>
+                                                                    <thead class="headings">
                                                                     <tr>
-                                                                        <td style="text-align: center; vertical-align: middle;">
-                                                                            <?php echo $cursor['interval'][$i]['ordre']; ?>
-                                                                        </td>
-                                                                        <td style="text-align: center; vertical-align: middle;">
-                                                                            <?php echo $cursor['interval'][$i]['n1']; ?>
-                                                                            - <?php echo $cursor['interval'][$i]['n2']; ?>
-                                                                        </td>
-                                                                        <td>
-                                                                            <table style=" margin-left: auto; margin-right: auto;">
-                                                                                <?php foreach ($saison as $s) { ?>
-                                                                                    <tr>
-                                                                                        <?php if ($s['typeS'] == 'haute') { ?>
-                                                                                            <td>
-
-
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Haute</label>
-                                                                                            </td>
-
-                                                                                            <?php
-                                                                                        }
-                                                                                        if ($s['typeS'] == 'moyenne') {
-                                                                                            ?>
-                                                                                            <td>
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Moyenne</label>
-                                                                                            </td>
-
-                                                                                            <?php
-                                                                                        }
-                                                                                        if ($s['typeS'] == 'basse') {
-                                                                                            ?>
-                                                                                            <td>
-                                                                                                <label class="col-form-label col-md-3 col-sm-3 label-align">Basse</label>
-                                                                                            </td>
-
-                                                                                        <?php } ?>
-                                                                                    </tr>
-
-                                                                                    <?php
-
-                                                                                } ?>
-
-                                                                            </table>
-                                                                        </td>
-
-
+                                                                        <th style="text-align: center;">Ordre</th>
+                                                                        <th style="text-align: center; ">Nb clients</th>
+                                                                        <th style="text-align: center;">Type saison</th>
                                                                         <?php
                                                                         foreach ($cursorFunction as $cs) {
-                                                                            $saison1 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['haute'];
-                                                                            $saison2 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['moyenne'];
-                                                                            $saison3 += ($cs['salary']/26) * $filtre_interval[$i][$cs['function']]['basse'];
-
-
                                                                             ?>
-                                                                            <td colspan="2">
-                                                                                <?php foreach ($saison as $s) {
-                                                                                    ?>
+                                                                            <th style="text-align: center;"
+                                                                                class="column-title no-link last"
+                                                                                colspan="2"><?php echo $cs['function']; ?></th>
+
+                                                                            <?php
+                                                                        }
+                                                                        ?>
+                                                                        <th style="text-align: center;"><img
+                                                                                    src="https://as2.ftcdn.net/jpg/02/23/33/09/500_F_223330987_RI7wJWZK5aewcHm4dDJ7PXfF5mwdH5EZ.jpg"
+                                                                                    alt="Girl in a jacket" width="30"
+                                                                                    height="30"> par saison
+                                                                        </th>
+                                                                        <th style="text-align: center;"><img
+                                                                                    src="https://as2.ftcdn.net/jpg/02/23/33/09/500_F_223330987_RI7wJWZK5aewcHm4dDJ7PXfF5mwdH5EZ.jpg"
+                                                                                    alt="Girl in a jacket" width="30"
+                                                                                    height="30"> total
+                                                                        </th>
+                                                                        <!--                                                                <th style="text-align: center;">Somme total</th>-->
+
+
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                    <?php
+                                                                    for ($i = 0; $i < count($cursor['interval']); $i++) {
+
+
+                                                                        $saison1 = 0;
+                                                                        $saison2 = 0;
+                                                                        $saison3 = 0;
+                                                                        $totalSal = 0;
+
+                                                                        $j = 0;
+
+
+                                                                        $filtre_interval = array();
+                                                                        $interval = $cursor['interval'][$i]['n1'] . " - " . $cursor['interval'][$i]['n2'];
+                                                                        $saison = $collection_saison->find();
+
+                                                                        $filtre_interval = array_filter($a, function ($p) use ($interval) {
+                                                                            return $p["interval"] == $interval;
+                                                                        });
+                                                                        ?>
+
+                                                                        <tr>
+                                                                            <td style="text-align: center; vertical-align: middle;">
+                                                                                <?php echo $cursor['interval'][$i]['ordre']; ?>
+                                                                            </td>
+                                                                            <td style="text-align: center; vertical-align: middle;">
+                                                                                <?php echo $cursor['interval'][$i]['n1']; ?>
+                                                                                - <?php echo $cursor['interval'][$i]['n2']; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <table style=" margin-left: auto; margin-right: auto;">
+                                                                                    <?php foreach ($saison as $s) { ?>
+                                                                                        <tr>
+                                                                                            <?php if ($s['typeS'] == 'haute') { ?>
+                                                                                                <td>
+
+
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Haute</label>
+                                                                                                </td>
+
+                                                                                                <?php
+                                                                                            }
+                                                                                            if ($s['typeS'] == 'moyenne') {
+                                                                                                ?>
+                                                                                                <td>
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Moyenne</label>
+                                                                                                </td>
+
+                                                                                                <?php
+                                                                                            }
+                                                                                            if ($s['typeS'] == 'basse') {
+                                                                                                ?>
+                                                                                                <td>
+                                                                                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Basse</label>
+                                                                                                </td>
+
+                                                                                            <?php } ?>
+                                                                                        </tr>
+
+                                                                                        <?php
+
+                                                                                    } ?>
+
+                                                                                </table>
+                                                                            </td>
+
+
+                                                                            <?php
+                                                                            foreach ($cursorFunction as $cs) {
+                                                                                $saison1 += ($cs['salary'] / 26) * $filtre_interval[$i][$cs['function']]['haute'];
+                                                                                $saison2 += ($cs['salary'] / 26) * $filtre_interval[$i][$cs['function']]['moyenne'];
+                                                                                $saison3 += ($cs['salary'] / 26) * $filtre_interval[$i][$cs['function']]['basse'];
+
+
+                                                                                ?>
+                                                                                <td colspan="2">
+                                                                                    <?php foreach ($saison as $s) {
+                                                                                        ?>
+                                                                                        <table style=" margin-left: auto; margin-right: auto;">
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <input type="number"
+                                                                                                           class="form-control"
+                                                                                                           name="<?php echo $s['typeS'] . $i . $j; ?>"
+                                                                                                           value="<?php echo $filtre_interval[$i][$cs['function']][$s['typeS']]; ?>"
+                                                                                                           required
+                                                                                                           style="height:35px;width: 75px;text-align: right"
+                                                                                                           min="0">
+                                                                                                </td>
+                                                                                                <td style="text-align: right;">
+                                                                                                    <input
+                                                                                                            value="<?php
+                                                                                                            echo number_format(($cs['salary'] / 26) * $filtre_interval[$i][$cs['function']][$s['typeS']], 3, '.', '');
+                                                                                                            ?>" disabled
+                                                                                                            style="height: 35px;width: 75px; text-align: right"
+                                                                                                    >
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                        <?php
+                                                                                    } ?>
+                                                                                </td>
+                                                                                <?php
+
+                                                                                $j++;
+                                                                            }
+                                                                            ?>
+                                                                            <td style="text-align:center;">
+                                                                                <?php foreach ($saison as $s) { ?>
                                                                                     <table style=" margin-left: auto; margin-right: auto;">
                                                                                         <tr>
                                                                                             <td>
-                                                                                                <input type="number"
-                                                                                                       class="form-control"
-                                                                                                       name="<?php echo $s['typeS'] . $i . $j; ?>"
-                                                                                                       value="<?php echo $filtre_interval[$i][$cs['function']][$s['typeS']]; ?>"
-                                                                                                       required
-                                                                                                       style="height:35px;width: 75px;text-align: right"
-                                                                                                       min="0">
-                                                                                            </td>
-                                                                                            <td style="text-align: right;">
-                                                                                                <input
-                                                                                                        value="<?php
-                                                                                                        echo number_format(($cs['salary']/26) * $filtre_interval[$i][$cs['function']][$s['typeS']], 3, '.', '');
-                                                                                                        ?>" disabled
-                                                                                                        style="height: 35px;width: 75px; text-align: right"
-                                                                                                >
+                                                                                                <?php
+                                                                                                if ($s['typeS'] == 'haute') {
+                                                                                                    $totalSal += $saison1;
+                                                                                                    ?>
+                                                                                                    <input style="height: 35px;width: 75px;text-align: right;"
+
+                                                                                                           name="salSaison1"
+
+                                                                                                           value="<?php echo number_format($saison1, 3, '.', '');
+                                                                                                           ?>"
+                                                                                                           disabled="disabled">
+
+                                                                                                    <?php
+
+                                                                                                }
+
+                                                                                                if ($s['typeS'] == 'moyenne') {
+                                                                                                    $totalSal += $saison2; ?>
+
+
+                                                                                                    <input
+                                                                                                            style="height: 35px;width: 75px;text-align: right;"
+                                                                                                            name="salSaison2"
+
+                                                                                                            value="<?php echo number_format($saison2, 3, '.', '');
+                                                                                                            ?>"
+                                                                                                            disabled="disabled">
+
+                                                                                                <?php }
+                                                                                                if ($s['typeS'] == 'basse') {
+                                                                                                    $totalSal += $saison3; ?>
+                                                                                                    <input
+                                                                                                            style="height: 35px;width: 75px;text-align: right;"
+                                                                                                            ;
+                                                                                                            name="salSaison2"
+                                                                                                            value="<?php echo number_format($saison3, 3, '.', '');
+                                                                                                            ?>"
+                                                                                                            disabled>
+
+
+                                                                                                    <?php
+
+                                                                                                } ?>
                                                                                             </td>
                                                                                         </tr>
                                                                                     </table>
                                                                                     <?php
                                                                                 } ?>
                                                                             </td>
-                                                                            <?php
+                                                                            <td style="vertical-align: middle; text-align: center;">
 
-                                                                            $j++;
-                                                                        }
-                                                                        ?>
-                                                                        <td style="text-align:center;">
-                                                                            <?php foreach ($saison as $s) { ?>
-                                                                                <table style=" margin-left: auto; margin-right: auto;">
-                                                                                    <tr>
-                                                                                        <td>
-                                                                                            <?php
-                                                                                            if ($s['typeS'] == 'haute') {
-                                                                                                $totalSal += $saison1;
-                                                                                                ?>
-                                                                                                <input style="height: 35px;width: 75px;text-align: right;"
+                                                                                <input
+                                                                                        value="<?php
+                                                                                        echo number_format($totalSal, 3, '.', '');
 
-                                                                                                       name="salSaison1"
-
-                                                                                                       value="<?php echo number_format($saison1, 3, '.', '');
-                                                                                                       ?>"
-                                                                                                       disabled="disabled">
-
-                                                                                                <?php
-
-                                                                                            }
-
-                                                                                            if ($s['typeS'] == 'moyenne') {
-                                                                                                $totalSal += $saison2; ?>
+                                                                                        ?>" disabled
+                                                                                        style="height: 35px;width: 75px;text-align: right;"
+                                                                                >
 
 
-                                                                                                <input
-                                                                                                        style="height: 35px;width: 75px;text-align: right;"
-                                                                                                        name="salSaison2"
+                                                                            </td>
 
-                                                                                                        value="<?php echo number_format($saison2, 3, '.', '');
-                                                                                                        ?>"
-                                                                                                        disabled="disabled">
+                                                                        </tr>
 
-                                                                                            <?php }
-                                                                                            if ($s['typeS'] == 'basse') {
-                                                                                                $totalSal += $saison3; ?>
-                                                                                                <input
-                                                                                                        style="height: 35px;width: 75px;text-align: right;"
-                                                                                                        ;
-                                                                                                        name="salSaison2"
-                                                                                                        value="<?php echo number_format($saison3, 3, '.', '');
-                                                                                                        ?>" disabled>
-
-
-                                                                                                <?php
-
-                                                                                            } ?>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </table>
-                                                                                <?php
-                                                                            } ?>
-                                                                        </td>
-                                                                        <td style="vertical-align: middle; text-align: center;">
-
-                                                                            <input
-                                                                                    value="<?php
-                                                                                    echo number_format($totalSal, 3, '.', '');
-
-                                                                                    ?>" disabled
-                                                                                    style="height: 35px;width: 75px;text-align: right;"
-                                                                            >
-
-
-                                                                        </td>
-
-                                                                    </tr>
-
-                                                                    <?php
+                                                                        <?php
 //                                                                $i++;
 
-                                                                }
+                                                                    }
+                                                                    ?>
+                                                                    </tbody>
+                                                                <?php }
                                                                 ?>
-                                                                </tbody>
-                                                            <?php }
-                                                            ?>
-                                                            <input type="submit" class="btn btn-success" name="ok"
-                                                                   value="Valider">
-                                                            <?php
+                                                                <input type="submit" class="btn btn-success" name="ok"
+                                                                       value="Valider">
+                                                                <?php
+                                                            }
                                                         }
                                                     } ?>
+
                                                 </table>
 
                                             </div>

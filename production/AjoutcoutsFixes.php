@@ -151,9 +151,7 @@ if (isset($_POST["submit"])) {
                                             <div class="input-group mb-3">
                                                 <input type="number" step="any" class="form-control" name="conge"
                                                        required="required" aria-label="">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
+
                                             </div>
 
                                         </div>

@@ -85,7 +85,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                         <div class="card-box table-responsive">
 
 
-                                            <table id="datatable" class="table table-striped table-bordered"
+                                            <table class="table table-striped table-bordered"
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
@@ -103,7 +103,7 @@ $UserConnect = $collection->findOne(array("email" => $_SESSION['email']));
                                                 <tbody>
                                                 <?php
 
-                                                $cursor = $collection_Department->find();
+                                                $cursor = $collection_Department->find()->sort(array('nameDep'=>1));
                                                 foreach ($cursor
 
                                                 as $c) { ?>

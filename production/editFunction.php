@@ -3,7 +3,7 @@ include("config.php");
 session_start();
 if (isset($_POST["submit"])) {
     $dep = $_POST['select'];
-    $function = $_POST['function'];
+    $function = rtrim($_POST['function']);
     $salary = $_POST['salary'];
     $id = $_POST['id'];
 

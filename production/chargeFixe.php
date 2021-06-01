@@ -106,8 +106,7 @@ foreach ($salaire as $item) {
                                                                 <?php echo $dep['interval'][$j]['n2']; ?>
                                                             </th>
                                                         <?php } ?>
-                                                        <th style="text-align: center">Totale par saison</th>
-                                                        <th style="text-align: center">Totale</th>
+
 
                                                     </tr>
                                                     </thead>
@@ -144,10 +143,7 @@ foreach ($salaire as $item) {
                                                         $interval = $dep['interval'][0]['n1'] . " - " . $dep['interval'][0]['n2'];
 
                                                         $s_dep_int = $collection_salaire->findOne(array("department" => $depp, "interval" => $interval));
-                                                        $totSaison1 = 0;
-                                                        $totSaison2 = 0;
-                                                        $totSaison3 = 0;
-                                                        $Total = 0;
+
 
                                                         for ($j = 0; $j < sizeof($dep['interval']); $j++) {
 
@@ -159,9 +155,6 @@ foreach ($salaire as $item) {
                                                                 foreach ($saison as $ss) {
 
                                                                     if (!empty($s_dep_int)) {
-                                                                        $totSaison1 += $s_dep_int['salaireTotale']['haute'];
-                                                                        $totSaison2 += $s_dep_int['salaireTotale']['moyenne'];
-                                                                        $totSaison3 += $s_dep_int['salaireTotale']['basse'];
 
 
                                                                         ?>
@@ -203,55 +196,8 @@ foreach ($salaire as $item) {
 
                                                         ?>
 
-                                                        <td>
-                                                            <?php foreach ($saison as $s) { ?>
-                                                                <?php
-                                                                if ($s['typeS'] == 'haute') {
-                                                                    $Total += $totSaison1;
-                                                                    ?>
-                                                                    <div class="form-group row" style="vertical-align: middle;text-align: right;">
-                                                                        <label
-                                                                               class="control-label col-md-12 col-sm-3 "><?php echo number_format($totSaison1, 3, ',', ','); ?></label>
-                                                                    </div>
 
 
-                                                                    <?php
-
-                                                                }
-
-                                                                if ($s['typeS'] == 'moyenne') {
-                                                                    $Total += $totSaison2; ?>
-
-                                                                    <div class="form-group row " style="vertical-align: middle;text-align: right;">
-                                                                        <label
-                                                                               class="control-label col-md-12 col-sm-3 "><?php echo number_format($totSaison2, 3, ',', ','); ?></label>
-                                                                    </div>
-
-                                                                <?php }
-                                                                if ($s['typeS'] == 'basse') {
-                                                                    $Total += $totSaison3; ?>
-                                                                    <div class="form-group row " style="vertical-align: middle;text-align: right;">
-                                                                        <label
-                                                                               class="control-label col-md-12 col-sm-3 "><?php echo number_format($totSaison3, 3, ',', ','); ?>
-                                                                        </label>
-                                                                    </div>
-
-
-                                                                    <?php
-
-                                                                } ?>
-                                                                <?php
-                                                            } ?>
-                                                        </td>
-                                                        <td style="vertical-align: middle;">
-
-                                                            <div class="form-group row " style="vertical-align: middle;text-align: right;">
-                                                                <label
-                                                                       class="control-label col-md-12 col-sm-3 "><?php echo number_format($Total, 3, ',', ','); ?></label>
-                                                            </div>
-
-
-                                                        </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>

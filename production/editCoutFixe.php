@@ -163,9 +163,7 @@ else {
                                                 <input type="number" step="any" class="form-control" name="conge"
                                                        required="required" aria-label=""
                                                        value="<?php echo $cout['conge']; ?>">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
+
                                             </div>
 
                                         </div>
